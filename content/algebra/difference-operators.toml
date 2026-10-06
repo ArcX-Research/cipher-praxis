@@ -260,7 +260,7 @@ kind = "script"
 note = "English monogram table from which the letter-difference distribution D and its 0.020-bit divergence from uniform are computed (same table as in the solvers)."
 
 [[provenance]]
-path = "archive-c/pk8-solution/README.md"
+path = "archive-c/Cryptanalysis/pk8-solution/README.md"
 kind = "note"
 note = "True-plaintext quintgram level of about -750 to -765 at 153 letters under the shared table."
 

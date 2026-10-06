@@ -121,7 +121,7 @@ note = "Fresh target-absent pilot receipt with separate structural, character-sc
 ref = "LOG429"
 
 [[provenance]]
-path = "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log"
+path = "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz"
 kind = "log"
 note = "Frozen positive in which the exact cell was selected but the character-optimal map made two label errors in a repeated rare word."
 ref = "LOG632"
@@ -133,7 +133,7 @@ note = "Fresh-panel design and independent audit of lexical neighbourhood scores
 ref = "LOG633"
 
 [[provenance]]
-path = "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log"
+path = "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log.gz"
 kind = "log"
 note = "Fresh target-absent receipt with two unseen rare-letter traps and thirty negative cases."
 ref = "LOG633"

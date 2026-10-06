@@ -8,7 +8,7 @@ family = "Known-plaintext methods"
 tags = ["crib", "known plaintext", "linear system", "GF(2)", "GF(13)", "CRT", "recurrence", "quintgram", "planted controls", "sum of periodic keys"]
 related = ["sum-of-periodic-keys", "crib-dragging", "crib-driven-alphabet-recovery", "finite-field-linear-algebra", "modular-inverse-and-crt", "linear-recurrences-lcg", "n-gram-language-scoring", "quadgram-log-likelihood", "planted-controls", "control-first-policy", "dictionary-attack", "compound-periodic-key", "g-crib", "g-selection-freedom", "lcm-of-periods", "difference-operators"]
 summary = "When a keystream is a linear function of a few unknown values, a crib does more than fix the key letters it touches: every crib letter gives one linear equation modulo 26, and enough of them fix the whole keystream. Solve the equations over GF(2) and GF(13), check that the crib rows leave no freedom in the keystream, rejoin the two answers by the Chinese remainder theorem, extend the key across the text by its recurrence, decrypt everything and score it with a language model. Sweep cribs, offsets, period sets and alphabet conventions with planted controls in front of the target."
-updated = "2026-09-09"
+updated = "2026-10-06"
 
 [[blocks]]
 kind = "definition"
@@ -77,11 +77,11 @@ function CRIB_JOB(y, eps, cribs, a, D):
     best = -infinity
     for each crib in cribs (first D letters, duplicates skipped):
         for o in 0..n-D:
-            for j in 0..D-1: k[o+j] = (pos_P(crib[j]) - eps*y[o+j]) mod 26
+            for j in 0..D-1: k[o+j] = (y[o+j] - eps*pos_P(crib[j])) mod 26
             for i in o+D..n-1:  k[i] = -(sum_{j<D} a[j]*k[i-D+j]) mod 26
             for i in o-1 down to 0:
                 k[i] = -(INVERSE_MOD(a[0], 26) * sum_{j>=1} a[j]*k[i+j]) mod 26
-            x = [(k[i] + eps*y[i]) mod 26 for i in 0..n-1]
+            x = [eps*(y[i] - k[i]) mod 26 for i in 0..n-1]
             s = QUINTGRAM_SCORE(x)
             if s > best: best = s; record (crib, o, x)
     return best                             // compared with the planted level
@@ -141,24 +141,24 @@ kind = "script"
 note = "Scheduler: asserts both control pass markers, enumerates period sets by increasing total period with eight alphabet/sign cells each, 15 s slices least-elapsed first, sqlite checkpointing."
 
 [[provenance]]
-path = "archive-a/mixed-cribs-mixed-cribs-core-pk8/1055.jsonl"
+path = "archive-c/Cryptanalysis/pk8-research/results/mixed-cribs/mixed-cribs-mixed-cribs-core-pk8/0991-1056/1055.jsonl"
 kind = "data"
 note = "The 16 running-best records of job 1055; the last is the 18-letter crib at offset 122, the earlier ones score about -1,300."
 ref = "job 1055"
 
 [[provenance]]
-path = "archive-a/mixed-cribs-pk8.log"
+path = "archive-c/Cryptanalysis/pk8-research/logs/mixed-cribs/mixed-cribs-pk8.log.gz"
 kind = "log"
 note = "Original scheduler log of the search; line 1287 is the hit: job 1055, periods [4, 5, 6, 7], keyed alphabet both sides, sign +1, 316,744 placements, best -767.35, complete in 11.9 s (recorded 2026-09-09); the next-best job in the log scored -1196.8."
 ref = "job 1055"
 
 [[provenance]]
-path = "archive-c/pk8-solution/README.md"
+path = "archive-c/Cryptanalysis/pk8-solution/README.md"
 kind = "note"
 note = "Exact command and environment of job 1055, reproduction output (COMPLETE 18 316744 -767.35), next-best job -1196.8, planted true plaintexts about -750 to -765 in this scorer."
 
 [[provenance]]
-path = "archive-c/pk8-solution/pk8_solution.py"
+path = "archive-c/Cryptanalysis/pk8-solution/pk8_solution.py"
 kind = "solver"
 note = "METHOD section: re-enacts the slide of the winning crib over all 136 offsets with exact GF(2)/GF(13) solves, uniqueness tests and CRT, selecting the same plaintext with a dictionary-coverage scorer."
 
@@ -169,12 +169,12 @@ note = "Five planted controls: 35 random cribs plus the true crib, exact plainte
 ref = "mixed-crib-controls.log"
 
 [[provenance]]
-path = "archive-a/mixed-crib-controls.log"
+path = "archive-c/Cryptanalysis/pk8-research/logs/mixed-cribs/mixed-crib-controls.log"
 kind = "log"
 note = "Five MIXED_ANYWHERE_CRIB_CONTROL rows (4 to 6 resume rounds) and the ALL_..._PASS marker."
 
 [[provenance]]
-path = "archive-a/linear-template-controls.log"
+path = "archive-c/Cryptanalysis/pk8-research/logs/linear-templates/linear-template-controls.log"
 kind = "log"
 note = "Three LINEAR_TEMPLATE_CONTROL rows (mixed_period 0, 1; structured_hill 2) and the ALL_..._PASS marker the scheduler requires."
 

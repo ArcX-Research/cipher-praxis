@@ -1,0 +1,97 @@
+id = "symbolic-codebook-propagation"
+section = "exact"
+title = "Symbolic codebook propagation"
+subtitle = "Derive forced coordinate relations before assigning numeric codewords"
+status = "VERIFIED"
+status_note = "Binary parity and ternary color consequences are sound necessary conditions. The cited standalone finite proof modes enumerate small assignments and check inferred relations; closure alone is not a complete satisfiability decision."
+family = "Constraint propagation"
+tags = ["codebook", "fractionation", "XOR", "three-coloring", "injectivity"]
+related = ["all-different-constraints", "constraint-satisfaction-forward-checking", "baconian", "trifid", "independent-coordinate-alphabets", "conjugacy-and-gauge"]
+summary = "A symbolic coordinate word contains variables whose numeric values have not yet been chosen. Different plaintext symbols must eventually receive different coordinate words. That injectivity requirement can force binary parity or ternary inequality relations early, rejecting impossible branches before a full codebook is enumerated."
+updated = "2026-10-06"
+
+[[blocks]]
+kind = "definition"
+body = '''
+Assign one tuple of coordinate expressions to each distinct symbol. Repeated occurrences of that same symbol reuse its tuple; injectivity is imposed between different symbols. For binary coordinates a tuple component is a variable XOR a fixed bit. Two words $U,V$ must satisfy
+
+$$\bigvee_j (U_j\oplus V_j)=1.$$
+
+A parity union-find stores equalities of the form $x\oplus y=b$. Reduce each pairwise inequality under that forest. A constant-one component satisfies it; constant zeros disappear. Identical expressions count once, while an expression and its complement make the disjunction true. No remaining expression is a contradiction; exactly one forces that expression to one.
+'''
+
+[[blocks]]
+kind = "variants"
+title = "Ternary projection capacity and color closure"
+body = '''
+For length-$d$ ternary words, fixing $r$ coordinates leaves $3^{d-r}$ distinct cells. Group words by their canonical symbolic tuple on those coordinates. A class larger than this capacity is impossible. If two classes together exceed the capacity, their numeric projections must differ. When the resulting disjunction contains only one unresolved variable pair, add an inequality edge.
+
+In an inequality graph on three possible values, two vertices both adjacent to both ends of an edge must share the third value. Merge them. If they also have an inequality edge between them, reject the branch. Rebuild affected projections and edges after every merge. These are sound local consequences, not a complete three-coloring algorithm.
+
+Numeric-domain matching is a complementary test. The special ternary Hall formula is covered in [All-different constraints](/algebra/all-different-constraints); it does not replace these shared-variable relations.
+'''
+
+[[blocks]]
+kind = "pseudocode"
+body = '''
+```text
+function BINARY_INJECTIVITY_CLOSURE(words,parity_forest):
+    repeat:
+        changed = false
+        for each pair U,V belonging to different symbols:
+            expressions = empty set; satisfied = false
+            for coordinate j:
+                e = CANONICAL_XOR(U[j],V[j],parity_forest)
+                if e == 1: satisfied = true; break
+                if e == 0: continue
+                if COMPLEMENT(e) in expressions: satisfied = true; break
+                expressions.insert(e)
+            if satisfied: continue
+            if expressions is empty: return CONTRADICTION
+            if size(expressions) == 1:
+                e = the sole expression
+                if not parity_forest.force(e == 1): return CONTRADICTION
+                changed = true
+    until not changed
+    return CONSISTENT_RELAXATION,parity_forest
+```
+'''
+
+[[blocks]]
+kind = "complexity"
+body = '''
+For $m$ words of width $d$ and $v$ binary variables, a simple pass examines $O(m^2d)$ components. Each productive pass merges at least one pair of forest roots, so there are at most $v-1$ productive passes. Incremental queues can revisit only pairs affected by a merge. Use union by size and parity-aware path compression for efficient forest operations. No beam width or search cap is needed for this closure itself.
+'''
+
+[[blocks]]
+kind = "failure_modes"
+body = '''
+Treating a remaining disjunction as if every component must differ is unsound. Forgetting XOR complements loses tautologies. Numeric matching can pass while shared-variable constraints fail. Conversely, a closure fixed point can still have no complete injective assignment. Any subsequent beam or capped search must keep its incompleteness separate from the sound propagation rules.
+'''
+
+[[blocks]]
+kind = "controls"
+body = '''
+The binary source has a standalone synthetic mode that enumerates all assignments in small generated systems, checks that every inferred parity holds in every valid assignment, and rejects no satisfiable system. The ternary proof mode performs the analogous enumeration for three-color relations. These controls test implication soundness; a closure's failure to discover an existing contradiction is permitted.
+'''
+
+[[blocks]]
+kind = "example"
+body = '''
+Binary words $(x,y)$ and $(x,z)$ for two different symbols force $y\oplus z=1$, because the first coordinate cannot distinguish them. If another constraint already says $y=z$, no injective codebook exists. In the ternary case, let $a\ne b$ and let both $c$ and $d$ differ from each of $a,b$. Then $c=d$, whatever names are assigned to the three values.
+'''
+
+[[provenance]]
+path = "archive-c/k4-binary-parity-closure-20261006/closure.cpp"
+kind = "solver"
+note = "Canonical XOR disjunction reduction, parity closure and standalone exhaustive synthetic soundness mode."
+
+[[provenance]]
+path = "archive-c/k4-ternary-color-closure-20261006/closure.cpp"
+kind = "solver"
+note = "Projection-capacity implications, common-neighbor color merges and finite proof mode."
+
+[[provenance]]
+path = "CipherPraxis/content/RESEARCH_CHECKS_2026-10-06.json"
+kind = "audit"
+note = "Execution receipts for the standalone synthetic proof modes, compiled outside the research directories."

@@ -6,7 +6,7 @@ status = "VERIFIED"
 status_note = "The cited cycle solvers use exact row reduction over two prime fields and join the answers with CRT. Nullity, not simple consistency, carries the useful information in their homogeneous systems. Known-answer tests passed, as did 4/4 hidden shared-plaintext controls and 32/32 exact crib solves."
 family = "Linear algebra over finite rings and fields"
 tags = ["GF(2)", "GF(13)", "rank", "nullity", "null space", "row reduction"]
-related = ["modular-inverse-and-crt", "all-different-constraints", "modular-arithmetic-z26", "units-mod-26", "residue-class-graphs", "matrix-invertibility-mod-26", "constraint-satisfaction-forward-checking", "word-prefix-csp", "exact-chain-oracle", "g-nullity", "g-all-different", "exact-optimization-admission", "conjugacy-and-gauge", "linear-keystream-crib-solve"]
+related = ["modular-inverse-and-crt", "all-different-constraints", "modular-arithmetic-z26", "units-mod-26", "residue-class-graphs", "matrix-invertibility-mod-26", "constraint-satisfaction-forward-checking", "word-prefix-csp", "exact-chain-oracle", "g-nullity", "g-all-different", "exact-optimization-admission", "conjugacy-and-gauge", "linear-keystream-crib-solve", "finite-extension-fields"]
 summary = "Linear cipher rules create equations in the unknown alphabet positions over Z26, which is not a field. Solve the same equations over GF(2) and GF(13) instead. Nullity predicts the remaining linear search, while injectivity supplies additional rejection rules. For a complete alphabet, necessary power sums can reduce the coefficient space before enumeration. Keep exact multiplicity and parity checks afterward."
 updated = "2026-09-08"
 

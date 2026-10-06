@@ -25,6 +25,7 @@ cargo test --workspace --all-features
 
 echo "▸ finite algorithm checks"
 python3 scripts/check_research_algorithms.py
+python3 scripts/check_research_additions.py
 
 echo "▸ content"
 cargo run --quiet -p praxis-core --features authoring --bin praxis-check -- content --strict
@@ -33,7 +34,12 @@ cargo run --quiet -p praxis-core --features authoring --bin praxis-check -- cont
 echo "▸ list markers"
 cargo run --quiet -p praxis-core --features authoring --bin praxis-check -- content --lists | tail -1
 echo "▸ provenance paths"
-CORPUS_DIR="${CORPUS_DIR:-../Cryptanalysis}"
+if [ -z "${CORPUS_DIR:-}" ]; then
+  CORPUS_DIR="../Cryptanalysis"
+  if [ ! -d "$CORPUS_DIR" ]; then
+    CORPUS_DIR="$HOME/Projects/Mywork/ArcX-Research/Research/Cryptography/Cryptanalysis"
+  fi
+fi
 if [ -d "$CORPUS_DIR" ]; then
   python3 scripts/check_provenance.py --corpus "$CORPUS_DIR"
 else

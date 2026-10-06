@@ -1,0 +1,90 @@
+id = "finite-extension-fields"
+section = "algebra"
+title = "Finite extension fields"
+subtitle = "Compute with polynomial coordinates and recognize equivalent cipher descriptions"
+status = "VERIFIED"
+status_note = "Polynomial reduction, field identities, inverses and the logarithm correspondence are checked on a finite field of 27 elements. This is an algebraic equivalence, not evidence of cryptanalytic recovery or a new security property."
+family = "Finite fields"
+tags = ["finite field", "polynomial basis", "GF(27)", "discrete logarithm"]
+related = ["finite-field-linear-algebra", "modular-arithmetic-z26", "conjugacy-and-gauge", "vigenere", "autokey", "aes-gcm"]
+summary = "A field with a prime-power number of elements can be represented by polynomials modulo an irreducible polynomial. Field multiplication is not integer multiplication modulo the field size. In the 27-element field, the 26 nonzero elements form a cyclic group; logarithm coordinates turn their multiplication into addition modulo 26."
+updated = "2026-10-06"
+
+[[blocks]]
+kind = "definition"
+body = '''
+For a prime $p$ and an irreducible monic polynomial $f$ of degree $d$, the quotient $\mathrm{GF}(p)[t]/(f(t))$ is a field with $p^d$ elements. Representatives have degree less than $d$. Add their coefficients modulo $p$; multiply by polynomial convolution and reduce modulo $f$.
+
+For $\mathrm{GF}(27)$ take $p=3$, $d=3$, and $f(t)=t^3+2t+1$. None of $0,1,2$ is a root, so this cubic is irreducible. The relation $t^3=t+2$ reduces products. An integer label $a_0+3a_1+9a_2$ encodes coefficients; it does not turn field addition into addition modulo 27.
+'''
+
+[[blocks]]
+kind = "equations"
+title = "Multiplication becomes a repeating additive key"
+body = '''
+The nonzero group has order 26. Choose a primitive element $g$ and write $A_j=g^j$ for $0\le j<26$. Then
+
+$$A_u A_v=A_{(u+v)\bmod26},\qquad A_u/A_v=A_{(u-v)\bmod26}.$$
+
+Consequently, a symbol cipher defined only by multiplication by nonzero key elements is an additive cipher in logarithm coordinates. Transform the alphabet map, key and any feedback primer together. This correspondence does not apply to field addition, and zero has no multiplicative logarithm. A cipher using all 27 elements needs an explicit zero rule.
+'''
+
+[[blocks]]
+kind = "pseudocode"
+body = '''
+```text
+function PREPARE_FIELD(p,monic_irreducible_f):
+    d = degree(f); q = p^d
+    require p is prime and f is irreducible
+    for a,b in 0..q-1:  // appropriate only for a small field
+        coefficients = CONVOLVE(BASE_P_DIGITS(a,d),BASE_P_DIGITS(b,d))
+        for j = 2*d-2 down to d:
+            v = coefficients[j] mod p
+            for k = 0..d-1:
+                coefficients[j-d+k] -= v*f[k]
+            coefficients[j] = 0
+        product[a,b] = ENCODE_BASE_P(coefficients[0..d-1] mod p)
+    choose nonzero g with order q-1 using the prime factors of q-1
+    powers[0] = 1
+    for j = 1..q-2: powers[j] = product[powers[j-1],g]
+    require powers lists every nonzero element exactly once
+    for j = 0..q-2: logarithm[powers[j]] = j
+    return product,powers,logarithm
+function MULTIPLY_NONZERO(a,b,prepared):
+    return prepared.powers[(prepared.logarithm[a]+prepared.logarithm[b]) mod (q-1)]
+```
+'''
+
+[[blocks]]
+kind = "complexity"
+body = '''
+Schoolbook polynomial multiplication costs $O(d^2)$ coefficient operations. For a small field, a full product table costs $O(q^2)$ storage and then constant-time indexed arithmetic. Logarithm tables need $O(q)$ storage and are useful for nonzero products. These tables are teaching and small-alphabet search optimizations; secret-dependent table access is not automatically suitable for cryptographic implementations.
+'''
+
+[[blocks]]
+kind = "failure_modes"
+body = '''
+Using a reducible polynomial introduces zero divisors and breaks field inversion. A nonprimitive generator omits some nonzero elements. Confusing polynomial labels with residues modulo 27 corrupts both addition and multiplication. Counting logarithmic and multiplicative descriptions as independent cipher evidence duplicates an equivalent model.
+'''
+
+[[blocks]]
+kind = "controls"
+body = '''
+The finite checks cover all field products and nonzero inverses, associativity and distributivity, and the complete nonzero logarithm multiplication table. They also check the no-root criterion across monic cubics over the three-element field. Those are exact small-field checks; the polynomial criterion for degrees above three needs more than testing roots.
+'''
+
+[[blocks]]
+kind = "example"
+body = '''
+The labels of $t$ and $t^2$ are 3 and 9. Their product is $t^3=t+2$, whose label is 5; integer multiplication modulo 27 would incorrectly give zero. Likewise, the field sum of labels 2 and 1 is zero because the constant coefficients add modulo 3.
+'''
+
+[[provenance]]
+path = "archive-c/pk9-math-20260913/field27.py"
+kind = "library"
+note = "Cubic-field arithmetic, primitive elements and multiplicative-to-additive alphabet correspondence."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Finite polynomial, field-identity and complete nonzero logarithm checks."

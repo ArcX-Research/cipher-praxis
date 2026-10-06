@@ -8,7 +8,7 @@ family = "Enumeration strategies"
 tags = ["bidirectional", "time-memory trade-off", "join", "beam", "reverse language model"]
 related = ["beam-search", "exhaustive-enumeration", "k-best-lists", "cp-sat-and-smt-solvers", "all-different-enumeration", "quagmire-iii", "shared-cycle-attack", "local-language-model-prior", "planted-controls", "g-beam-width"]
 summary = "Meet-in-the-middle search computes forward and backward intermediate values and joins equal values. For two key spaces of size N, it can reduce the main transform evaluations from order N squared to order N, at the cost of order N memory and any work needed to process collisions and verify candidates. The recorded bidirectional decoding variant remains a capped beam heuristic; on its cited short controls, the true pair fell below the retained pool before exact constraints became selective."
-updated = "2026-09-07"
+updated = "2026-10-06"
 
 [[blocks]]
 kind = "definition"
@@ -33,6 +33,19 @@ body = '''
 Join condition: $G_{k_1}(p) = F_{k_2}^{-1}(c)$. If the meeting values behave as independent uniform $b$-bit strings, the expected number of accidental pairs is $|K_1||K_2|/2^b$. Real cipher intermediates can be nonuniform and correlated, so candidate counts must be measured or verified; additional known pairs reduce collisions.
 
 Decoding budget per macro-step: raw pair scores $\le 676\,W$; with $W = 40{,}000$ that is $27{,}040{,}000$ candidates ranked to a pool of $M = 80{,}000$. The exact system tested at the meet is the shared-cycle system $a(C_i) \mp a(P_i) - k_{i \bmod 7} \equiv 0 \pmod{26}$ with all 26 positions distinct and $a(A) = 0$ as gauge.
+'''
+
+[[blocks]]
+kind = "variants"
+title = "Four-layer joins with crib-relative phases"
+body = '''
+For a positionwise cascade $P=G_4(G_3(G_2(G_1(C))))$, join the intermediate windows
+
+$$G_2(G_1(C_{window}))=G_3^{-1}(G_4^{-1}(P_{crib})).$$
+
+Canonicalize each layer by its actual permutation tables rather than its label, retaining the parameter aliases. Split the work into the two layer pairs and compute the crib-side table once when its phases are independent free variables. A phase measured relative to a crib at offset $o$ satisfies $\phi_{relative}=\phi_{absolute}+o\pmod p$; recover the absolute phase by subtracting the offset. Tied phases or position-moving layers need their own proof and cannot use this shortcut automatically.
+
+For an alphabet of size 26, at most twelve symbols fit exactly into a 64-bit integer using five bits per symbol. Include the length in the join key, or use one fixed length per table. This is a collision-free encoding of those windows, unlike a truncated hash. Retain every colliding parameter tuple and verify all crib positions and the complete proposed transform. A finite dictionary or crib-bank join covers that bank, not every possible key or plaintext.
 '''
 
 [[blocks]]
@@ -131,3 +144,8 @@ ref = "logs/183_cyclebeam_exactprefix.log"
 title = "Exhaustive Cryptanalysis of the NBS Data Encryption Standard"
 author = "W. Diffie, M. E. Hellman"
 year = 1977
+
+[[provenance]]
+path = "archive-c/pk9-math-20260913/README.md"
+kind = "note"
+note = "Canonical periodic tables, four-layer pair joins, packed crib signatures and relative-phase reuse."

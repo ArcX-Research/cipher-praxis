@@ -1,0 +1,102 @@
+id = "aes-gcm"
+section = "ciphers"
+title = "AES-GCM"
+subtitle = "Combine counter-mode encryption with polynomial authentication"
+status = "VERIFIED"
+status_note = "The 96-bit-nonce, 128-bit-tag mode equations follow the standard. Finite checks verify GHASH independently and reproduce fixed AES-GCM vectors using known AES block outputs; they do not validate an AES implementation or a deployment."
+family = "Hash functions and authentication"
+tags = ["authenticated encryption", "AES-GCM", "GHASH", "nonce"]
+related = ["nonce-reuse-audit", "sha256", "hmac", "one-time-pad", "finite-extension-fields", "kat-harness"]
+summary = "AES-GCM encrypts with AES counter mode and authenticates the ciphertext together with optional associated data. The associated data stays visible. A nonce must be unique for distinct encryption operations under the same key. Authentication must succeed before plaintext becomes available to the caller."
+updated = "2026-10-06"
+
+[[blocks]]
+kind = "definition"
+body = '''
+This page specifies the byte-oriented profile with a 12-byte nonce and a 16-byte tag. Let $H=\operatorname{AES}_K(0^{128})$ and let $J_0$ be the nonce followed by the four bytes `00 00 00 01`. Counter encryption XORs the message with AES outputs beginning at `inc32(J0)`; `inc32` increments only the final 32 bits.
+
+GHASH starts at $Y_0=0$ and processes 128-bit blocks by $Y_i=(Y_{i-1}\oplus X_i)H$. Its field is defined by $z^{128}+z^7+z^2+z+1$. Use the bit-string convention of SP 800-38D throughout; reversing polynomial bit order without converting the operands changes the result.
+'''
+
+[[blocks]]
+kind = "equations"
+body = '''
+Let $A$ be associated data and $C$ ciphertext. Pad each separately with the minimum number of zero bytes to a block boundary, then append their original bit lengths as two unsigned 64-bit big-endian integers:
+
+$$S=\operatorname{GHASH}_H(A\Vert\operatorname{pad}(A)\Vert C\Vert\operatorname{pad}(C)\Vert[8|A|]_{64}\Vert[8|C|]_{64}).$$
+
+The full tag is $T=\operatorname{AES}_K(J_0)\oplus S$. The encoded lengths distinguish data boundaries and trailing zero bytes. A block-aligned or empty field gets no extra padding block.
+'''
+
+[[blocks]]
+kind = "assumptions"
+body = '''
+Use an approved AES key length and one fixed tag length per profile. For this profile, reject plaintext longer than $2^{39}-256$ bits and associated data whose bit length cannot fit in 64 bits, as well as any stricter application limit. Counter space, invocation limits and key lifecycle must follow the governing protocol. Nonce allocation must remain unique across restarts and all senders sharing a key. This page does not specify the different initial-counter derivation needed for non-96-bit nonces.
+'''
+
+[[blocks]]
+kind = "pseudocode"
+body = '''
+```text
+function PREPARE(key):
+    aes = PREPARE_AES_KEY(key)
+    H = aes.encrypt_block(16 zero bytes)
+    return (aes, PREPARE_GHASH_MULTIPLIER(H))
+function AUTH(state, nonce, A, C):
+    J = nonce || bytes(0,0,0,1)
+    S = GHASH_STREAM(state.multiplier,
+        A || zero_pad_to_block(A) || C || zero_pad_to_block(C)
+        || big_endian_u64(8*length(A)) || big_endian_u64(8*length(C)))
+    return state.aes.encrypt_block(J) XOR S
+function SEAL(state, unique_nonce, plaintext, A):
+    REQUIRE_PROFILE_LENGTHS(unique_nonce, plaintext, A)
+    J = unique_nonce || bytes(0,0,0,1)
+    C = AES_COUNTER_XOR(state.aes, inc32(J), plaintext)
+    return C, AUTH(state,unique_nonce,A,C)
+function OPEN(state, nonce, C, A, tag):
+    if invalid_profile_lengths(nonce,C,A) or length(tag) != 16: return FAIL
+    if not CONSTANT_TIME_EQUAL(AUTH(state,nonce,A,C),tag): return FAIL
+    J = nonce || bytes(0,0,0,1)
+    return AES_COUNTER_XOR(state.aes,inc32(J),C)
+```
+'''
+
+[[blocks]]
+kind = "complexity"
+body = '''
+Cache the AES key schedule and GHASH multiplier per key. Encryption and authentication are linear in message and associated-data length. Hardware carry-less multiplication can accelerate GHASH; counter blocks can be encrypted in parallel. Avoid secret-indexed lookup tables when their accesses can leak. Verification-first decryption needs access to ciphertext after authentication, through buffering or a second read.
+'''
+
+[[blocks]]
+kind = "failure_modes"
+body = '''
+Reusing a nonce under the same key repeats the counter stream, so the XOR of two ciphertexts reveals the XOR of their plaintexts over the overlap. Reuse also undermines authentication. [Nonce audits](/validation/nonce-reuse-audit) detect repeated operations in supplied records but cannot prove that unrecorded operations were safe. Releasing unauthenticated plaintext, changing tag length based on received input, or authenticating only ciphertext while omitting required context are separate failures.
+'''
+
+[[blocks]]
+kind = "controls"
+body = '''
+The local mode checks use fixed zero-key AES block answers, empty and one-block vectors, and modified ciphertext, associated data and tags. GHASH multiplication is compared with an independent polynomial-reduction calculation. These tests isolate mode composition; an actual AES backend needs its own known-answer and implementation checks.
+'''
+
+[[blocks]]
+kind = "example"
+body = '''
+With a 16-byte zero key, a 12-byte zero nonce, and empty plaintext and associated data, GHASH is zero. The tag is therefore the AES encryption of the initial counter: `58e2fccefa7e3061367f1d57a4e7455a`. This is a test fixture, not a nonce-generation procedure.
+'''
+
+[[provenance]]
+path = "archive-c/faultspan/docs/AUDIT.md"
+kind = "design"
+note = "AES-GCM nonce-reuse audit profile and its coverage limits."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Independent GHASH arithmetic, fixed-block GCM vectors and rejection checks."
+
+[[references]]
+title = "SP 800-38D: Galois/Counter Mode and GMAC"
+author = "Morris Dworkin, National Institute of Standards and Technology"
+year = 2007
+url = "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf"

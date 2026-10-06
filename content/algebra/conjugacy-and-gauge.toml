@@ -6,9 +6,9 @@ status = "VERIFIED"
 status_note = "The shared-cycle symmetries are proved and tested: 48/48 unit checks, 16/16 translation checks, and 312 equivalent descriptions reduced to one class. One control run recovered in one gauge but scored in another. That run was marked invalid and replaced."
 family = "Group theory"
 tags = ["gauge", "symmetry", "canonicalisation", "identifiability", "conjugacy"]
-related = ["permutation-cycles", "group-actions-on-alphabets", "units-mod-26", "affine-maps-mod-26", "modular-arithmetic-z26", "gauge-defect-invalidation", "planted-controls", "shared-cycle-attack", "segment-chain-analysis", "key-cancellation", "quagmire-iii", "latent-label-identifiability", "candidate-bank-lineage-and-cap-accounting", "partial-permutation-completion-bounds", "g-gauge-freedom", "g-affine-orbit", "g-conjugate-permutation", "independent-coordinate-alphabets", "factorial-completion-resource-guards", "lcm-of-periods"]
+related = ["permutation-cycles", "group-actions-on-alphabets", "units-mod-26", "affine-maps-mod-26", "modular-arithmetic-z26", "gauge-defect-invalidation", "planted-controls", "shared-cycle-attack", "segment-chain-analysis", "key-cancellation", "quagmire-iii", "latent-label-identifiability", "candidate-bank-lineage-and-cap-accounting", "partial-permutation-completion-bounds", "g-gauge-freedom", "g-affine-orbit", "g-conjugate-permutation", "independent-coordinate-alphabets", "factorial-completion-resource-guards", "lcm-of-periods", "finite-extension-fields", "symbolic-codebook-propagation"]
 summary = "Gauge freedom means that different parameter values can produce exactly the same visible result. For keyed additive ciphers, you may shift the alphabet coordinates along with the key or multiply them by a unit. A solver must treat these versions as equivalent. If it fixes the gauge incorrectly, or recovers in one gauge and scores in another, it can reject a correct answer. One recorded run failed for this reason."
-updated = "2026-09-09"
+updated = "2026-10-06"
 
 [[blocks]]
 kind = "definition"
@@ -87,6 +87,17 @@ Keep the completion family, not just its size. If an inverse lookup asks for $t$
 Unit symmetry can have a stabilizer on a partial map even though it acts freely on full permutations. Modulo26, every unit fixes the anchored image $\{0,13\}$. Therefore a partial completion family must not automatically be divided by12. Count its stabilizer, or retain all witnesses without this quotient. Similarly, complete an unobserved physical-zero image before changing gauges; there is no extra factor of26 to discard.
 
 These factorial counts require unrestricted missing coordinates and independent maps. Involutions, coupled maps, fixed key families or prescribed images need additional constraints; [partial-permutation completion bounds](/exact/partial-permutation-completion-bounds) treats the different involution case. Symbolic completion preserves feasibility but does not by itself choose readable missing letters. These statements have independent proof review, not a new implementation or recovery benchmark.
+'''
+
+[[blocks]]
+kind = "variants"
+title = "Coordinate-convention quotients"
+body = '''
+For three ternary coordinate axes, permuting the axes and independently permuting each axis's digit names gives $3!\,(3!)^3=1296$ descriptions. If an unrestricted independent plaintext codebook can absorb one common digit relabeling throughout the model, that six-element action removes duplicate descriptions: $1296/6=216$ convention classes.
+
+Generate representatives directly. For each axis order, compose every digit map with the inverse of the first map so the first becomes the identity; enumerate only the two remaining digit permutations. Keep the absorbed relabeling as provenance for lifting witnesses. This normalization is valid only when the entire constrained model permits the common relabeling. A fixed plaintext codebook, fixed coordinate names or additional non-invariant restrictions can break it.
+
+The quotient removes redundant parameter conventions, not failed controls or unfinished branches. The independent finite check enumerates all descriptions and compares their canonical classes.
 '''
 
 [[blocks]]
@@ -297,3 +308,13 @@ year = 2004
 path = "CipherPraxis/scripts/check_research_algorithms.py"
 kind = "script"
 note = "Observed-coordinate completion and inverse-query fibers checked by exhaustive permutation completion. These checks do not establish general recovery power or replay the external solver."
+
+[[provenance]]
+path = "archive-c/k4-trifid-separator-orientations-20261006/PLAN.txt"
+kind = "note"
+note = "Common digit-label gauge in the independent-codebook coordinate model."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Finite convention-orbit and canonical representative checks."

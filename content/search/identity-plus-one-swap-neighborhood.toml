@@ -113,7 +113,7 @@ kind = "audit"
 note = "Complete evaluation of all 325 single swaps around planted 26-symbol alphabets, including local-optimum and basin diagnostics."
 
 [[provenance]]
-path = "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log"
+path = "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz"
 kind = "log"
 note = "Records the need to retain complete map completions and independently replay disclosed mappings when the structural cell and language-optimal labels differ."
 ref = "LOG632"
@@ -125,7 +125,7 @@ note = "Independent audit of 36 complete identity-plus-one-swap neighbourhoods a
 ref = "LOG633"
 
 [[provenance]]
-path = "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log"
+path = "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log.gz"
 kind = "log"
 note = "Fresh receipt in which both planted rare-label swaps win uniquely."
 ref = "LOG633"

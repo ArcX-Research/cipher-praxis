@@ -8,7 +8,7 @@ family = "Exactness guarantees"
 tags = ["equivalence certificate", "pruning", "callbacks", "caps", "determinism"]
 related = ["closed-footprint-bound-cache", "bound-benchmarks-and-certificates", "exact-optimization-admission", "exhaustive-enumeration", "known-answer-tests", "candidate-bank-lineage-and-cap-accounting", "reproducibility-receipts"]
 summary = "There are two different exactness claims. A new pruning rule must return the same complete accepted set as an unpruned reference. A cache or refactor that claims to preserve traversal must also keep callback contents and order, dynamic thresholds, counters, and the precise cap terminal. A capped comparison can prove bounded behavioural equivalence, but it cannot prove that the uncapped search is complete."
-updated = "2026-09-07"
+updated = "2026-10-06"
 
 [[blocks]]
 kind = "definition"
@@ -49,6 +49,15 @@ body = '''
 - **Per-query bound certificate:** the new bound value equals or safely dominates an independently evaluated reference value at every visited state.
 - **Order-insensitive consumer:** callback order may be canonicalized before comparison only when the downstream result is proved independent of order.
 - **Adaptive consumer:** when callbacks update a heap threshold, order is part of semantics and must be preserved or re-proved.
+'''
+
+[[blocks]]
+kind = "variants"
+title = "Reuse a completed exclusion through an implication certificate"
+body = '''
+Let an old model contain equality edges $E_{old}$ and suppose its complete constrained family was proved infeasible. A new model can reuse that exclusion if every old edge follows from the new equality forest and the remaining assumptions and domains are unchanged or stronger. For each old edge $(x,y)$, retain an explicit path from $x$ to $y$ made of new equality edges. Transitivity is then a small independently checkable implication certificate.
+
+New variables may occur along a path; they must have the same coordinate domain, and every model of the new system must restrict to a legal model of the old one. Preserve orientation, codebook family, boundary conventions and all aliases needed for this restriction. A matching hash or similar-looking union-find state is not that proof. If an edge has no path, or if the old search was capped rather than complete, solve the new branch directly or mark it unresolved.
 '''
 
 [[blocks]]
@@ -146,3 +155,8 @@ path = "withmath/logs/647_footprint_traversal_20260905T230617Z_17886495773843220
 kind = "log"
 note = "Frozen receipt for complete and bounded trace equality, per-query old/new bound equality, and malformed-input refusal."
 ref = "LOG647"
+
+[[provenance]]
+path = "archive-c/k4-trifid-separator-orientations-20261006/PLAN.txt"
+kind = "note"
+note = "Equality-forest path certificates for reusing completed coordinate-family exclusions."

@@ -1,0 +1,106 @@
+id = "sha256"
+section = "ciphers"
+title = "SHA-256"
+subtitle = "Compress a byte stream into a fixed-length cryptographic digest"
+status = "VERIFIED"
+status_note = "The rolling message schedule is equivalent to the full schedule. Synthetic padding and binary-input checks compare the complete digest with the standard library; this verifies those computations, not collision resistance."
+family = "Hash functions and authentication"
+tags = ["hash function", "SHA-256", "message schedule", "padding"]
+related = ["hmac", "aes-gcm", "mnemonic-wordlist-encoding", "kat-harness", "known-answer-tests"]
+summary = "SHA-256 is an unkeyed hash function with a 256-bit output. It processes padded 512-bit blocks through a 64-round compression function. A circular buffer of sixteen words computes the same message schedule with less storage than a full trace. A digest is neither encrypted text nor proof of who sent a message."
+updated = "2026-10-06"
+
+[[blocks]]
+kind = "definition"
+body = '''
+For a byte message of bit length $L<2^{64}$, append a one bit, enough zero bits to reach length $448\pmod{512}$, and the 64-bit big-endian encoding of $L$. Start with the eight initial words specified in FIPS 180-4. Each block updates this chaining state; serialize the final eight words in big-endian order.
+
+All word additions below are modulo $2^{32}$. `ROTR` rotates a 32-bit word, `SHR` shifts in zeros, and `NOT` complements exactly 32 bits. The initial words and 64 round constants are fixed standard parameters, not a secret key.
+'''
+
+[[blocks]]
+kind = "equations"
+title = "Round functions"
+body = '''
+$$\operatorname{Ch}(x,y,z)=(x\land y)\oplus(\neg x\land z),\qquad \operatorname{Maj}(x,y,z)=(x\land y)\oplus(x\land z)\oplus(y\land z).$$
+
+The large sigma functions XOR rotations by $(2,13,22)$ and $(6,11,25)$ respectively. The small functions are $\sigma_0(x)=\operatorname{ROTR}_7(x)\oplus\operatorname{ROTR}_{18}(x)\oplus\operatorname{SHR}_3(x)$ and $\sigma_1(x)=\operatorname{ROTR}_{17}(x)\oplus\operatorname{ROTR}_{19}(x)\oplus\operatorname{SHR}_{10}(x)$.
+
+After the first sixteen input words, the schedule obeys $W_t=\sigma_1(W_{t-2})+W_{t-7}+\sigma_0(W_{t-15})+W_{t-16}$. Reading those four values before overwriting slot $t\bmod16$ makes a sixteen-word buffer sufficient.
+'''
+
+[[blocks]]
+kind = "variants"
+body = '''
+A reduced-round experiment must state its round count, initial state, padding and feed-forward convention. Keeping the standard padding and feed-forward while stopping early defines a different function. A result about that function does not establish a result about full SHA-256. A full trace retains every expanded word and entering round state for diagnosis; the storage optimization below deliberately does not retain that trace.
+'''
+
+[[blocks]]
+kind = "pseudocode"
+body = '''
+```text
+function SHA256(message):
+    require bit_length(message) < 2^64
+    H = the eight SHA-256 initial words from FIPS 180-4
+    for block in STREAM_PADDED_BLOCKS(message, block_bits=512):
+        W[0..15] = BIG_ENDIAN_WORDS(block)
+        (a,b,c,d,e,f,g,h) = H
+        for t = 0..63:
+            j = t mod 16
+            if t >= 16:
+                w = small_sigma1(W[(t-2) mod 16]) + W[(t-7) mod 16]
+                w += small_sigma0(W[(t-15) mod 16]) + W[j]
+                W[j] = w mod 2^32
+            u = h + large_sigma1(e) + Ch(e,f,g) + K[t] + W[j]
+            v = large_sigma0(a) + Maj(a,b,c)
+            (a,b,c,d,e,f,g,h) = (u+v,a,b,c,d+u,e,f,g)
+            reduce every working word modulo 2^32
+        H = (H + (a,b,c,d,e,f,g,h)) wordwise modulo 2^32
+    return BIG_ENDIAN_BYTES(H)
+```
+'''
+
+[[blocks]]
+kind = "complexity"
+body = '''
+Time is linear in message length; each padded block uses 64 rounds. The schedule stores sixteen 32-bit words instead of 64, in addition to the chaining state and an input block. This is a storage improvement, not a measured throughput claim. Implementations can use platform hash instructions while preserving the same function.
+'''
+
+[[blocks]]
+kind = "failure_modes"
+body = '''
+Off-by-one padding at 55/56 and 63/64 bytes, a byte count encoded as a bit count, signed shifts, wrong endianness, or overwriting a circular slot before reading its old value all change the digest. Binary input must preserve zero and high-bit bytes. Raw SHA-256 is not a message authentication code: use a defined construction such as [HMAC](/ciphers/hmac) when a shared secret must authenticate bytes. A successful test suite does not prove the absence of collisions or preimage attacks.
+'''
+
+[[blocks]]
+kind = "controls"
+body = '''
+The local finite checks compare a rolling-schedule implementation with the standard library on empty, short, multiblock and padding-boundary messages, including zero bytes, high-bit bytes and ramps. The research sources additionally provide full round traces and independent C/Python implementations. A WebAssembly build of the same C source is a different runtime, not an independent algorithmic oracle.
+'''
+
+[[blocks]]
+kind = "example"
+body = '''
+The three ASCII bytes `abc` have bit length 24. Their single padded block starts `61 62 63 80`, ends in the big-endian value 24, and hashes to `ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad`. The output has 32 bytes regardless of the message length.
+'''
+
+[[provenance]]
+path = "archive-c/sha256/python/sha256.py"
+kind = "library"
+note = "Reference schedule, compression, reduced-round semantics and trace state."
+
+[[provenance]]
+path = "archive-c/hashprobe/src/suite.c"
+kind = "library"
+note = "Binary patterns and padding-boundary differential test panel."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Independent rolling-schedule digest checks against hashlib."
+
+[[references]]
+title = "FIPS 180-4: Secure Hash Standard"
+author = "National Institute of Standards and Technology"
+year = 2015
+url = "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf"

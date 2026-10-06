@@ -1,0 +1,86 @@
+id = "swagman"
+section = "ciphers"
+title = "Swagman transposition"
+subtitle = "Permute each column using a repeating Latin-square key"
+status = "VERIFIED"
+status_note = "The Latin-square route and inverse are derived directly and checked on synthetic rectangles. The checks do not certify a language-guided search over unknown squares."
+family = "Transposition"
+tags = ["transposition", "Swagman", "Latin square", "column permutations"]
+related = ["amsco", "columnar-transposition", "route-transposition", "all-different-constraints", "maximum-weight-bipartite-assignment"]
+summary = "Swagman uses a Latin square to choose the row permutation in each column of a rectangular message. Each key column is a permutation, and the Latin condition also constrains the rows across key columns. This is a different key space from ordinary columnar transposition, which reorders whole columns."
+updated = "2026-10-06"
+
+[[blocks]]
+kind = "definition"
+body = '''
+Use zero-based coordinates. Let $L$ be an $h\times h$ Latin square containing each value $0,\ldots,h-1$ exactly once in every row and every column. Write $n=hm$ plaintext letters into $h$ rows of width $m$ in row-major order. For each physical column $j$, place the letter from row $r$ into output row $L_{r,j\bmod h}$, then read the output rectangle column by column.
+
+Thus the position rule is $C_{jh+L_{r,j\bmod h}}=P_{rm+j}$. Each key column is bijective, so every ciphertext position has exactly one preimage. A complete rectangle is required; any padding and original-length convention must be specified separately.
+'''
+
+[[blocks]]
+kind = "attack"
+body = '''
+Cache the $h$ column permutations and their inverses. For unknown keys, use row and column domain masks to enforce the Latin condition during search. The research implementation aggregates position-dependent bigram or trigram contributions into small tables and searches Latin squares under that profile. A complete optimum for a bigram profile remains only a proposal for a later word or longer-gram score. A fixed-size retained bank or seed bank is not an exhaustive search under the final score.
+
+If plaintext row order is subsequently optimized, the seam contribution between two complete row strings can be cached. A subset dynamic program finds the best row order under those pairwise seam costs; this does not optimize a language model with longer-range interactions outside those costs.
+'''
+
+[[blocks]]
+kind = "pseudocode"
+body = '''
+```text
+function PREPARE_SQUARE(L):
+    h = number_of_rows(L)
+    require h > 0 and every row and column is a permutation of 0..h-1
+    for phase = 0..h-1:
+        for row = 0..h-1:
+            inverse[phase][L[row][phase]] = row
+    return L, inverse
+function SWAGMAN(text,prepared,decrypt):
+    L,inverse = prepared; h = number_of_rows(L)
+    require length(text) mod h == 0
+    width = length(text) div h; out = array of length(text)
+    for col = 0..width-1:
+        for row = 0..h-1:
+            if decrypt:
+                r = inverse[col mod h][row]
+                out[r*width+col] = text[col*h+row]
+            else:
+                out[col*h+L[row][col mod h]] = text[row*width+col]
+    return out
+```
+'''
+
+[[blocks]]
+kind = "complexity"
+body = '''
+Square validation and inverse caching take $O(h^2)$ time and storage; encryption or decryption takes $O(n)$. The optional row-order dynamic program uses $O(h^2 2^h)$ transitions and $O(h2^h)$ states. Its exactness assumes the stated pairwise seam objective and a fixed set of row strings.
+'''
+
+[[blocks]]
+kind = "failure_modes"
+body = '''
+Using independent column permutations without enforcing Latin rows enlarges the key family. Confusing a destination permutation with its inverse changes the cipher. Treating an incomplete rectangle as complete invents letters. Search bounds and retained-bank sizes must be associated with the score they actually bound or rank.
+'''
+
+[[blocks]]
+kind = "example"
+body = '''
+For a small illustrative order-three square, take rows $(0,1,2)$, $(1,2,0)$, $(2,0,1)$. Write `ABCDEFGHIJKL` as rows `ABCD`, `EFGH`, `IJKL`. The four output columns are `AEI`, `JBF`, `GKC`, `DHL`, giving `AEIJBFGKCDHL`. This small square illustrates the general rule rather than a prescribed puzzle size.
+'''
+
+[[provenance]]
+path = "archive-c/Cryptanalysis/scripts/pk_swagman_profile.py"
+kind = "solver"
+note = "Independent Latin-square route, profile-score replay and subset dynamic program for row order; distinguishes complete profiles from retained proposal banks."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Hand-derived rectangle and finite Latin-square route checks."
+
+[[references]]
+title = "Swagman cipher description"
+author = "American Cryptogram Association"
+url = "https://www.cryptogram.org/downloads/aca.info/ciphers/Swagman.pdf"

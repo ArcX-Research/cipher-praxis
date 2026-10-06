@@ -6,9 +6,9 @@ status = "VERIFIED"
 status_note = "A frozen control panel selected every planted structural cell but failed one exact-text case, demonstrating that the endpoint contracts make materially different decisions."
 family = "Control design"
 tags = ["endpoint contract", "planted controls", "decoder validation", "forward replay"]
-related = ["parameter-versus-plaintext-recovery", "planted-controls", "control-first-policy", "target-absent-controls", "tautological-gate-rule", "known-answer-tests", "reproducibility-receipts"]
+related = ["parameter-versus-plaintext-recovery", "planted-controls", "control-first-policy", "target-absent-controls", "tautological-gate-rule", "known-answer-tests", "reproducibility-receipts", "hmac", "nonce-reuse-audit"]
 summary = "A system that detects a cipher family, estimates parameters, labels symbols, emits plaintext, and verifies a candidate has several endpoints. Each endpoint needs its own frozen truth object, comparator, threshold, and failure label. One passing endpoint cannot authorise another."
-updated = "2026-09-05"
+updated = "2026-10-06"
 
 [[blocks]]
 kind = "definition"
@@ -31,6 +31,15 @@ body = '''
 - **Exact-text contract:** all plaintext positions match.
 - **Key contract:** observed labels, quotient key, or literal full key match the specifically declared target.
 - **Replay contract:** an independent forward implementation reproduces the input from the disclosed candidate.
+'''
+
+[[blocks]]
+kind = "variants"
+title = "Message authentication and actual application effects"
+body = '''
+For a signed request, separate at least three contracts: exact-byte signature verification, freshness or retry policy, and permitted state effects. A failure response is not proof of non-application. After an invalid signature or an expired message, inspect state through an independent observation and require that the protected effect did not occur.
+
+Define the policy for authenticated delivery identifiers. An allowed retry with the same identifier and identical content can return success while applying no second effect. A changed payload under that identifier needs its own conflict rule. Timestamps and identifiers must be included in an unambiguous authenticated encoding if the application relies on them. These endpoint controls supplement [HMAC](/ciphers/hmac); HMAC alone cannot enforce freshness or idempotency.
 '''
 
 [[blocks]]
@@ -106,7 +115,7 @@ A control plants cell $\theta^*$ and map $M^*$. The runner selects $\theta^*$, l
 [[blocks]]
 kind = "notes"
 body = '''
-This explicit endpoint matrix was developed in this project after a structural detector and its downstream labeller diverged on a frozen positive. The general lesson is broader: validate exactly the claim that will be made.
+A control can pass at one endpoint and fail at another. Retain both observations and validate exactly the claim that will be made.
 '''
 
 [[provenance]]
@@ -115,7 +124,7 @@ kind = "script"
 note = "Frozen panel with separate planted-cell, completion, emitted-text, null, and independent-forward fields."
 
 [[provenance]]
-path = "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log"
+path = "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz"
 kind = "log"
 note = "Receipt in which the planted-cell contract passes all positives but the preregistered exact-emission contract fails one."
 ref = "LOG632"
@@ -125,3 +134,8 @@ path = "withmath/docs/project-notes/PK10_PLAINFEEDBACK630_SECONDORDER_THEORY.md"
 kind = "design"
 note = "Defines the distinction among structural cell, equality class, labels, plaintext, and forward certificate."
 ref = "LOG630"
+
+[[provenance]]
+path = "archive-c/faultspan/examples/python/web_signed_requests.py"
+kind = "script"
+note = "Independent response/effect fixtures with verification, freshness and idempotent-retry faults."

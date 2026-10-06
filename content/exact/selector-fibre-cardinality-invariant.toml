@@ -165,7 +165,7 @@ note = "Known-answer receipt for the twenty-six exact checks."
 ref = "LOG679"
 
 [[provenance]]
-path = "withmath/logs/679_portapair_public_20260906T051625Z_37123.log"
+path = "withmath/logs/679_portapair_public_20260906T051625Z_37123.log.gz"
 kind = "data"
 note = "Complete alignment, count-vector, and alias census used by the audit."
 ref = "LOG679"

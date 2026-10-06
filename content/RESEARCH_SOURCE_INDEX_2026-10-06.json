@@ -1,0 +1,356 @@
+{
+  "date": "2026-10-06",
+  "scope": "Selected newly cited files and repaired compressed-log citations, not a complete archive inventory or execution receipt",
+  "initial_entries": 319,
+  "final_entries": 329,
+  "sources": [
+    {
+      "path": "CipherPraxis/content/RESEARCH_CHECKS_2026-10-06.json",
+      "bytes": 1295,
+      "sha256": "d1687066f7a64c36eacc17705613e9abe9dc532296d77c0253a22cb6c3cb7b56",
+      "articles": [
+        "symbolic-codebook-propagation"
+      ]
+    },
+    {
+      "path": "CipherPraxis/scripts/check_research_additions.py",
+      "bytes": 23417,
+      "sha256": "f50006f0e00ef355c074cd29a22f0fb807dfc3f9409995d40dbab14cd2bb6faa",
+      "articles": [
+        "all-different-constraints",
+        "conjugacy-and-gauge",
+        "finite-extension-fields",
+        "aes-gcm",
+        "amsco",
+        "autokey",
+        "bilinear-feedback-relation",
+        "digraphic-slide",
+        "hmac",
+        "sha256",
+        "swagman",
+        "periodic-key-marginal-likelihood",
+        "nonce-reuse-audit"
+      ]
+    },
+    {
+      "path": "archive-c/Cryptanalysis/fresh-attack-20260912/external_triage/slidefair_reference.py",
+      "bytes": 1668,
+      "sha256": "26417671a6e3dbb50f7f8a4513080ffe96d0259f920ec30850c07f7e51a3f86b",
+      "articles": [
+        "digraphic-slide"
+      ]
+    },
+    {
+      "path": "archive-c/Cryptanalysis/pk8-research/logs/mixed-cribs/mixed-cribs-pk8.log.gz",
+      "bytes": 106631,
+      "sha256": "973b3c8eb12a1f67c295ffeea000f8a69ea16eca729965640d67702e19972223",
+      "articles": [
+        "linear-keystream-crib-solve"
+      ]
+    },
+    {
+      "path": "archive-c/Cryptanalysis/scripts/pk_partition_transposition.py",
+      "bytes": 7827,
+      "sha256": "1cabcd635e7aefb28cc7158c3f3693dd420cde6d8a2aa11661d4f6dc40f03448",
+      "articles": [
+        "amsco"
+      ]
+    },
+    {
+      "path": "archive-c/Cryptanalysis/scripts/pk_swagman_profile.py",
+      "bytes": 14293,
+      "sha256": "8faf3d637ac16a806cfa073ee46075a0008281c7a10bb65cb0c0a6041316cf53",
+      "articles": [
+        "swagman"
+      ]
+    },
+    {
+      "path": "archive-c/faultspan/docs/AUDIT.md",
+      "bytes": 7461,
+      "sha256": "923d462150838e485ed32e9c74ec5019161fd6a9ba0b2a82914f8e19e13a0782",
+      "articles": [
+        "aes-gcm",
+        "nonce-reuse-audit"
+      ]
+    },
+    {
+      "path": "archive-c/faultspan/docs/SIGNED-REQUESTS.md",
+      "bytes": 4129,
+      "sha256": "007e6b216ac32a432b45935e9868d0f2657d4574cbf0052456ab509e9a953d51",
+      "articles": [
+        "hmac"
+      ]
+    },
+    {
+      "path": "archive-c/faultspan/examples/python/web_signed_requests.py",
+      "bytes": 6079,
+      "sha256": "ebb397b60ab6e980628149a91420b707b9ee9d0ba0a2ec0038abb0df241e7d77",
+      "articles": [
+        "hmac",
+        "endpoint-specific-control-contracts"
+      ]
+    },
+    {
+      "path": "archive-c/faultspan/src/checks/c/nonce.c",
+      "bytes": 6177,
+      "sha256": "110cdcc2ed155fa0a5c52f471e6b7db86fab48678aaf823e2b4a21ee2e5e3f6f",
+      "articles": [
+        "nonce-reuse-audit"
+      ]
+    },
+    {
+      "path": "archive-c/hashlab/README.md",
+      "bytes": 3240,
+      "sha256": "f01e682c749dcc82d82411f9a3d657cd1e1d93a9e4fe4938818e60fa5f321936",
+      "articles": [
+        "kat-harness"
+      ]
+    },
+    {
+      "path": "archive-c/hashprobe/PROVENANCE.md",
+      "bytes": 1504,
+      "sha256": "f63beed1721c000182920bebdd5c03f3cec59c79551d90fa88b8914e305954b8",
+      "articles": [
+        "kat-harness"
+      ]
+    },
+    {
+      "path": "archive-c/hashprobe/src/suite.c",
+      "bytes": 4070,
+      "sha256": "57a614073600a68378f6232d157c54ab60850b119d37cede28800bf754ae12de",
+      "articles": [
+        "sha256",
+        "kat-harness"
+      ]
+    },
+    {
+      "path": "archive-c/k4-binary-parity-closure-20261006/closure.cpp",
+      "bytes": 5878,
+      "sha256": "5a84ca706bad5ade54cfd1fced8051af7a8242c23d57c030b728f1c54cd6a943",
+      "articles": [
+        "symbolic-codebook-propagation"
+      ]
+    },
+    {
+      "path": "archive-c/k4-coordinate-hall-beam-20261006/PLAN.txt",
+      "bytes": 2202,
+      "sha256": "6251e329cf4feea983fdae8e2c9779192a21c995136170fa07e41d8b7fa19f0d",
+      "articles": [
+        "all-different-constraints"
+      ]
+    },
+    {
+      "path": "archive-c/k4-nonunit-feedback-20261006/PLAN.txt",
+      "bytes": 2050,
+      "sha256": "4d2c5ebb09c34be0cb7dee6a3bd8d8ad58cfa88f1c0580e91b1e93d10b0f8578",
+      "articles": [
+        "autokey"
+      ]
+    },
+    {
+      "path": "archive-c/k4-ternary-color-closure-20261006/closure.cpp",
+      "bytes": 6595,
+      "sha256": "8ea6694f6858e10070a6961e8da1ce9163115aca70080882bd5a3bcf110481ce",
+      "articles": [
+        "symbolic-codebook-propagation"
+      ]
+    },
+    {
+      "path": "archive-c/k4-trifid-separator-orientations-20261006/PLAN.txt",
+      "bytes": 1850,
+      "sha256": "7cc8b23dcafdcd5e52b54d93ed685deb1d9d876773ca4df705c995460362ef40",
+      "articles": [
+        "conjugacy-and-gauge",
+        "pruned-traversal-equivalence-certificates"
+      ]
+    },
+    {
+      "path": "archive-c/pk9-math-20260913/README.md",
+      "bytes": 3038,
+      "sha256": "1d6c1311d7374fefd01590de60d3e0e956cee4a290122307e64fa3adcc1041e9",
+      "articles": [
+        "meet-in-the-middle"
+      ]
+    },
+    {
+      "path": "archive-c/pk9-math-20260913/bilinear_affine_normalize.py",
+      "bytes": 6384,
+      "sha256": "f7ee9e9aba16574b742e949e0ede5eb131d879ea09c91c651642bb9bddab8d23",
+      "articles": [
+        "bilinear-feedback-relation"
+      ]
+    },
+    {
+      "path": "archive-c/pk9-math-20260913/field27.py",
+      "bytes": 7560,
+      "sha256": "f3c3c26dbfbc00bd5c64e2d95a1608c619e2343fac9deb04bc1a67d7a38573db",
+      "articles": [
+        "finite-extension-fields"
+      ]
+    },
+    {
+      "path": "archive-c/pk9-math-20260913/src/bilinear_feedback.cpp",
+      "bytes": 3328,
+      "sha256": "b87eaf0bb5657dc1f321b3bebdb210205a30fa2aa7e23bbab8820b5c8f881fd3",
+      "articles": [
+        "bilinear-feedback-relation"
+      ]
+    },
+    {
+      "path": "archive-c/pk9-structure-20260929/period-sum-evidence-proof.md",
+      "bytes": 2316,
+      "sha256": "39742932d2700b0437a5588e043cc85a106105bdb65bf6cf4c602b8000519e47",
+      "articles": [
+        "periodic-key-marginal-likelihood"
+      ]
+    },
+    {
+      "path": "archive-c/pk9-structure-20260929/segment_probe.py",
+      "bytes": 11327,
+      "sha256": "88e4becb001ece6ce6110b920d0d62923223a0f542d324e8b29e3cf23035283b",
+      "articles": [
+        "periodic-key-marginal-likelihood"
+      ]
+    },
+    {
+      "path": "archive-c/sha256/python/sha256.py",
+      "bytes": 10039,
+      "sha256": "92df58c9d02959e8c2009f8a45b19e90c85fbfdee583fc17687fc264fca38a92",
+      "articles": [
+        "sha256"
+      ]
+    },
+    {
+      "path": "withmath/logs/623_pk10_plainfeedback_controls_20260905T132430Z_1788614670209629000.log.gz",
+      "bytes": 483732,
+      "sha256": "21b7e834f3c259d5b4d4e5d6e7df6c0ed0c15bf0f907680099c699bcb149f6c6",
+      "articles": [
+        "plaintext-coordinate-feedback"
+      ]
+    },
+    {
+      "path": "withmath/logs/626_pk10_reverse_plainfeedback_controls_20260905T140910Z_1788617350010726000.log.gz",
+      "bytes": 449994,
+      "sha256": "2aa0a7649a6e57fcece650e59a60c9ccd6ca17e3bca6ad84af5d4165f2fb94ea",
+      "articles": [
+        "right-to-left-plaintext-feedback"
+      ]
+    },
+    {
+      "path": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz",
+      "bytes": 593182,
+      "sha256": "ee054a684e7c926f7151e3098d9722128a25a5dbeb66cfe9315f194d7378511c",
+      "articles": [
+        "symmetric-second-order-plaintext-feedback",
+        "parameter-versus-plaintext-recovery",
+        "identity-plus-one-swap-neighborhood",
+        "lexical-reranking-and-oov-bias",
+        "endpoint-specific-control-contracts"
+      ]
+    },
+    {
+      "path": "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log.gz",
+      "bytes": 1956838,
+      "sha256": "f6a74626960f590eef182dbd2f683a43a88ee116e49753be93367946489e0aa3",
+      "articles": [
+        "symmetric-second-order-plaintext-feedback",
+        "identity-plus-one-swap-neighborhood",
+        "lexical-reranking-and-oov-bias"
+      ]
+    },
+    {
+      "path": "withmath/logs/679_portapair_public_20260906T051625Z_37123.log.gz",
+      "bytes": 499518,
+      "sha256": "3fb82903537d2165d65cf768bde429e8d60f0f90a22bc5f62bcd928b3247324c",
+      "articles": [
+        "selector-fibre-cardinality-invariant"
+      ]
+    }
+  ],
+  "compressed_log_repairs": [
+    {
+      "article": "content/statistics/lexical-reranking-and-oov-bias.toml",
+      "before": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log",
+      "after": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz",
+      "compressed_bytes": 593182,
+      "uncompressed_bytes": 1532743,
+      "uncompressed_sha256": "e439b470cb1a05d2a27463c513f87971fde59e65f47c3a434e6df121cc072084"
+    },
+    {
+      "article": "content/statistics/lexical-reranking-and-oov-bias.toml",
+      "before": "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log",
+      "after": "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log.gz",
+      "compressed_bytes": 1956838,
+      "uncompressed_bytes": 5411428,
+      "uncompressed_sha256": "67bb594545ac89e409cc7095f50a845fdd26257052b5263443e837fde57499da"
+    },
+    {
+      "article": "content/search/identity-plus-one-swap-neighborhood.toml",
+      "before": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log",
+      "after": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz",
+      "compressed_bytes": 593182
+    },
+    {
+      "article": "content/search/identity-plus-one-swap-neighborhood.toml",
+      "before": "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log",
+      "after": "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log.gz",
+      "compressed_bytes": 1956838
+    },
+    {
+      "article": "content/ciphers/plaintext-coordinate-feedback.toml",
+      "before": "withmath/logs/623_pk10_plainfeedback_controls_20260905T132430Z_1788614670209629000.log",
+      "after": "withmath/logs/623_pk10_plainfeedback_controls_20260905T132430Z_1788614670209629000.log.gz",
+      "compressed_bytes": 483732,
+      "uncompressed_bytes": 1429543,
+      "uncompressed_sha256": "72003df839cdce5765a1156fbbda9566916d14cafa83bfcff5944bccf1523af9"
+    },
+    {
+      "article": "content/ciphers/symmetric-second-order-plaintext-feedback.toml",
+      "before": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log",
+      "after": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz",
+      "compressed_bytes": 593182
+    },
+    {
+      "article": "content/ciphers/symmetric-second-order-plaintext-feedback.toml",
+      "before": "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log",
+      "after": "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log.gz",
+      "compressed_bytes": 1956838
+    },
+    {
+      "article": "content/ciphers/right-to-left-plaintext-feedback.toml",
+      "before": "withmath/logs/626_pk10_reverse_plainfeedback_controls_20260905T140910Z_1788617350010726000.log",
+      "after": "withmath/logs/626_pk10_reverse_plainfeedback_controls_20260905T140910Z_1788617350010726000.log.gz",
+      "compressed_bytes": 449994,
+      "uncompressed_bytes": 1460892,
+      "uncompressed_sha256": "d18ea41ca44e8541313f28ab2b9c9b1d5a2ec364de566811d12e5580ef1c61d7"
+    },
+    {
+      "article": "content/cryptanalysis/parameter-versus-plaintext-recovery.toml",
+      "before": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log",
+      "after": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz",
+      "compressed_bytes": 593182
+    },
+    {
+      "article": "content/cryptanalysis/linear-keystream-crib-solve.toml",
+      "before": "archive-c/Cryptanalysis/pk8-research/logs/mixed-cribs/mixed-cribs-pk8.log",
+      "after": "archive-c/Cryptanalysis/pk8-research/logs/mixed-cribs/mixed-cribs-pk8.log.gz",
+      "compressed_bytes": 106631,
+      "uncompressed_bytes": 1053195,
+      "uncompressed_sha256": "481f9a1cdf7c116fde9eea800b38f70d10ebbedbc563821cc3a433963d38ff89"
+    },
+    {
+      "article": "content/exact/selector-fibre-cardinality-invariant.toml",
+      "before": "withmath/logs/679_portapair_public_20260906T051625Z_37123.log",
+      "after": "withmath/logs/679_portapair_public_20260906T051625Z_37123.log.gz",
+      "compressed_bytes": 499518,
+      "uncompressed_bytes": 4749185,
+      "uncompressed_sha256": "a9fd1e40ef070f00434a50146ff0325fdc0a6590c83971ab58959368b4a77235"
+    },
+    {
+      "article": "content/validation/endpoint-specific-control-contracts.toml",
+      "before": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log",
+      "after": "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz",
+      "compressed_bytes": 593182
+    }
+  ]
+}

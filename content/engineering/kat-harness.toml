@@ -6,9 +6,9 @@ status = "VERIFIED"
 status_note = "Recorded checks include self-tests, static fixed answers, parser mutations, one-time write failures, comparisons between implementations, and segment tests. Examples include 420 rejected parser mutations, 18 classified interruption points, and every fast swap-score change checked against a full rescore."
 family = "Tooling"
 tags = ["kat", "testing", "self-test", "mutation"]
-related = ["compiled-hot-cores", "control-first-policy", "tautological-gate-rule", "gauge-defect-invalidation", "known-answer-tests", "g-kat"]
+related = ["compiled-hot-cores", "control-first-policy", "tautological-gate-rule", "gauge-defect-invalidation", "known-answer-tests", "g-kat", "sha256", "hmac", "aes-gcm"]
 summary = "A known-answer test compares a fixed input with a predetermined result. Separate layers test algebra, incremental scores, parsing, durable writes, implementation agreement, segmentation, and control filters. Under the recorded protocol, a mode is admitted only after every applicable layer passes; passing these tests does not establish correctness outside their coverage."
-updated = "2026-09-07"
+updated = "2026-10-06"
 
 [[blocks]]
 kind = "definition"
@@ -33,6 +33,15 @@ For a state $k$, a move $m$ and an incremental scorer $\Delta$,
 $$\operatorname{full}(m(k)) - \operatorname{full}(k) = \Delta(k, m)$$
 
 must hold exactly for integer scores and every move in a deterministic sweep. The base core checks it for all $\binom{26}{2} = 325$ swaps on a stream and table generated from a recorded seed.
+'''
+
+[[blocks]]
+kind = "variants"
+title = "Hash boundaries and independent implementations"
+body = '''
+For a byte hash, test empty input, zero bytes, high-bit bytes and ramps at lengths around padding and block transitions. For SHA-256, the 55/56-byte boundary distinguishes one-block from two-block padding; 63/64 and 119/120 check neighboring and later-block boundaries. Compare streaming chunkings with a fixed whole-message digest and classify malformed output separately from a wrong digest.
+
+Pin the exact input bytes and reference implementation. Deterministic generators such as SplitMix are useful for reproducible test bytes but are not cryptographic random generators. A native build and a WebAssembly build of copied C code test runtime portability; they are not independent implementations of the hash algorithm. Add a separately implemented reference or a trusted external primitive, and retain intermediate schedule and round-state traces when locating a mismatch.
 '''
 
 [[blocks]]
@@ -169,3 +178,18 @@ path = "withmath/COORDINATION.md"
 kind = "audit"
 note = "LOG741 source review identified a result-tie branch shadowed by an earlier key-tie refusal, and weak rank/counter validation. A source-free construction proves 2,048 optimal conditional keys, below key cap 4,096 and above result cap 1; it was proposed, not executed."
 ref = "LOG741"
+
+[[provenance]]
+path = "archive-c/hashprobe/src/suite.c"
+kind = "library"
+note = "Known-answer vectors and padding-boundary binary input patterns."
+
+[[provenance]]
+path = "archive-c/hashprobe/PROVENANCE.md"
+kind = "note"
+note = "Documents the copied SHA-256 C reference."
+
+[[provenance]]
+path = "archive-c/hashlab/README.md"
+kind = "note"
+note = "WebAssembly checks using the same reference source alongside WebCrypto comparisons."

@@ -1,0 +1,105 @@
+id = "bilinear-feedback-relation"
+section = "ciphers"
+title = "Bilinear feedback relations"
+subtitle = "Decode a nonlinear lag relation with cached modular roots and chain dynamic programming"
+status = "VERIFIED"
+status_note = "The root-table decoder is compared with complete enumeration on small synthetic systems. Exactness concerns feasibility and the stated additive symbol cost; it does not imply unique decryption or language recovery."
+family = "Feedback constructions"
+tags = ["bilinear", "plaintext feedback", "modular roots", "dynamic programming"]
+related = ["autokey", "plaintext-coordinate-feedback", "linear-feedback-hill", "modular-inverse-and-crt", "exact-chain-oracle", "conjugacy-and-gauge"]
+summary = "A bilinear feedback relation combines the current plaintext coordinate with an earlier one through a product and linear terms. Once the earlier symbol is fixed, decoding reduces to a linear congruence. Caching its possible roots gives an exact lag-chain dynamic program, including states with no root or several roots."
+updated = "2026-10-06"
+
+[[blocks]]
+kind = "definition"
+body = '''
+In fixed alphabet coordinates modulo $q$, let $x_i$ be plaintext and let $y_i=x_{i-L}$ after the first $L$ positions. Earlier $y_i$ values come from a primer. For fixed parameters $a,b,d,e$ define
+
+$$c_i=a x_i y_i+b x_i+d y_i+e\pmod q.$$
+
+For a known predecessor $y$, possible current symbols solve $(ay+b)x=c-dy-e\pmod q$. If $g=\gcd(ay+b,q)$, there are no roots when the right side is not divisible by $g$, and exactly $g$ roots otherwise. This includes coefficient zero: its equation has all $q$ roots or none.
+
+This is a relation unless every reached coefficient $ay+b$ is a unit. A forward computation is always defined, but a one-to-one encryption scheme needs unique inversion and a specified primer. Even a nonzero odd coefficient can fail to be a unit modulo 26.
+'''
+
+[[blocks]]
+kind = "variants"
+title = "Affine coordinate normalization"
+body = '''
+Changing both plaintext coordinates to $X=ux+v$ and $Y=uy+v$, with $u$ a unit, leaves the ciphertext coordinate fixed and gives coefficients
+
+$$a'=a u^{-2},\quad b'=b u^{-1}-a'v,\quad d'=d u^{-1}-a'v,\quad e'=e-(b+d)vu^{-1}+a'v^2.$$
+
+This is an equivalent description only when the plaintext alphabet and primer are transformed too. The ciphertext alphabet has not been transformed in these equations. A common relabeling of both alphabets would need different formulas.
+'''
+
+[[blocks]]
+kind = "assumptions"
+body = '''
+The decoder below minimizes a sum of per-position symbol costs. Different residue chains modulo $L$ are then independent. A contiguous bigram or word score usually couples these chains, so separately minimizing monogram costs is not an exact optimizer for that later score. Parameters, alphabet maps and allowed primer sets are fixed for each run.
+'''
+
+[[blocks]]
+kind = "pseudocode"
+body = '''
+```text
+function PREPARE_ROOTS(q):
+    roots = q by q empty bitsets
+    for coefficient = 0..q-1:
+        for x = 0..q-1: roots[coefficient,coefficient*x mod q].insert(x)
+    return roots
+function DECODE(c,L,a,b,d,e,allowed_primers,cost,roots):
+    q = number_of_rows(roots); require 1 <= L <= length(c)
+    total = 0; plaintext = array of length(c)
+    for phase = 0..L-1:
+        prev[y] = 0 if y in allowed_primers[phase] else infinity
+        positions = phase, phase+L, ... below length(c)
+        for i in positions:
+            next[x] = infinity for every x
+            for y with finite prev[y]:
+                A = (a*y+b) mod q; B = (c[i]-d*y-e) mod q
+                for x in SET_BITS(roots[A,B]):
+                    value = prev[y] + cost[i,x]
+                    if value < next[x]: next[x]=value; back[i,x]=y
+            prev = next
+        x = ARGMIN(prev); if prev[x] == infinity: return INFEASIBLE
+        total += prev[x]
+        for i in reverse(positions): plaintext[i]=x; x=back[i,x]
+        primer[phase] = x
+    require FORWARD(plaintext,primer,a,b,d,e,L) == c
+    return total,plaintext,primer
+```
+'''
+
+[[blocks]]
+kind = "complexity"
+body = '''
+Root preparation inserts $q^2$ solution pairs once, instead of retesting every symbol for every edge. Each position then traverses at most $q^2$ allowed predecessor/current pairs. When the alphabet fits in one machine word, time is $O(q^2+nq^2)$ and root-table storage is $O(q^2)$ words. Score memory is $O(q)$ and backpointer memory is $O(nq)$; a score-only run omits backpointers. At $q=26$ each root set fits in one machine word. The pseudocode returns one minimizer; complete tie enumeration requires retaining all tied predecessors and explicit output accounting.
+'''
+
+[[blocks]]
+kind = "failure_modes"
+body = '''
+Dividing by a nonunit discards valid roots or invents an inverse. Initializing every primer value is appropriate only for an unknown unrestricted primer. A cap on path enumeration gives an incomplete list even if feasibility or the minimum score has been computed exactly. A monogram optimum and successful forward replay do not establish the intended plaintext.
+'''
+
+[[blocks]]
+kind = "example"
+body = '''
+Take $q=26$, $a=2$, $b=1$, $d=e=0$. At predecessor $y=1$, ciphertext 15 implies $3x=15$, uniquely giving $x=5$. At predecessor $y=6$, ciphertext 13 implies $13x=13$, allowing every odd coordinate. Ciphertext 2 at that same predecessor allows none. An exact decoder preserves all these cases.
+'''
+
+[[provenance]]
+path = "archive-c/pk9-math-20260913/src/bilinear_feedback.cpp"
+kind = "solver"
+note = "Bitset transitions, lag-chain minimum costs, traceback and capped path enumeration."
+
+[[provenance]]
+path = "archive-c/pk9-math-20260913/bilinear_affine_normalize.py"
+kind = "library"
+note = "Plaintext-coordinate affine normalization and inverse coefficient transformation."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Root-table dynamic programming compared with complete plaintext and primer enumeration; affine identity checks."

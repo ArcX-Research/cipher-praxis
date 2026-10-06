@@ -1,0 +1,93 @@
+id = "nonce-reuse-audit"
+section = "validation"
+title = "Nonce-reuse audits"
+subtitle = "Separate duplicate observations from distinct encryptions sharing a key and nonce"
+status = "VERIFIED"
+status_note = "The grouping and conflict rules are supported by the source implementation and synthetic record-order checks. A clean result covers only admitted observations and does not establish nonce uniqueness outside that evidence."
+family = "Cryptographic implementation validation"
+tags = ["nonce", "AES-GCM", "audit", "deduplication", "coverage"]
+related = ["aes-gcm", "reproducibility-receipts", "endpoint-specific-control-contracts", "evidence-scope-ladder", "immutable-artifact-postmortem"]
+summary = "Nonce reuse is a relationship between distinct encryption operations under the same key. Logs may contain several observations of one operation, conflicting descriptions or missing identities. An audit must resolve those issues before grouping key-and-nonce pairs, and report evidence coverage separately from any finding."
+updated = "2026-10-06"
+
+[[blocks]]
+kind = "definition"
+body = '''
+For a declared AES-GCM profile, an admitted record identifies an encryption operation, a key identity and the nonce bytes. A reuse witness consists of two different operation identities with the same key identity and nonce. Identical nonce bytes under different keys are not that witness.
+
+An operation identity must represent one actual encryption, not merely a delivery, retry or log line. Multiple agreeing observations of the same encryption count once. If its observations disagree on algorithm, key or nonce, exclude that operation as conflicting rather than selecting a convenient description. Missing identities, malformed nonces and unsupported profiles are coverage gaps.
+'''
+
+[[blocks]]
+kind = "assumptions"
+body = '''
+Key identities must distinguish actual key material consistently across senders and time. A renamed key or several keys sharing one label makes the conclusion conditional on that labeling. The audit cannot infer this identity from secret-free metadata alone. Compare exact declared identity strings; decode nonce encodings to bytes before comparing them. The example profile accepts exactly twelve nonce bytes.
+
+Read an immutable snapshot or detect changed and incomplete input. Preserve origins of duplicate, excluded and admitted records. A finding remains valid when unrelated records are incomplete, but an incomplete input cannot support complete coverage.
+'''
+
+[[blocks]]
+kind = "pseudocode"
+body = '''
+```text
+function AUDIT(records,snapshot_read_completed):
+    admitted = []; gaps = []; duplicates = []
+    sort record indices by operation identity using bounded-memory heapsort
+    for group of records with the same nonempty operation identity:
+        descriptors = parse every (algorithm,key_identity,nonce_bytes)
+        if any descriptor is missing, malformed or unsupported:
+            gaps.append(group); continue
+        if descriptors are not all identical:
+            gaps.append(conflicting_operation(group)); continue
+        admitted.append(one operation with descriptor and every origin)
+        duplicates.extend(the other agreeing observations)
+    gaps.extend(records with missing operation identity)
+    sort admitted indices by (key_identity,nonce_bytes,operation_identity)
+    findings = []
+    for group with equal (key_identity,nonce_bytes):
+        if size(group) > 1: findings.append(group with every operation and its origins)
+    coverage = COMPLETE if gaps is empty and snapshot_read_completed else INCOMPLETE
+    verdict = REUSE_OBSERVED if findings else NO_REUSE_OBSERVED
+    if not findings and coverage == INCOMPLETE: verdict = INSUFFICIENT_EVIDENCE
+    return verdict,coverage,findings,gaps,duplicates
+```
+'''
+
+[[blocks]]
+kind = "complexity"
+body = '''
+For $n$ bounded-size records, sorting and linear grouping cost $O(n\log n)$ comparisons, with index storage linear in $n$ and no quadratic pairwise scan. Heapsort gives the worst-case sorting bound with constant auxiliary sorting workspace. Record storage and emitted origin lists still take space. With unbounded identifiers, include the cost of reading and comparing their bytes.
+'''
+
+[[blocks]]
+kind = "failure_modes"
+body = '''
+Counting duplicate logs as separate encryptions creates false reuse. Collapsing actual re-encryptions because they share an application request ID can hide reuse. Keeping the first description of a conflicting operation can produce an arbitrary answer. A zero-finding report from truncated input, a capped traversal or incomplete identities is not a clean uniqueness certificate. This audit detects recorded reuse; it neither generates nonces nor estimates the quality of a random generator.
+'''
+
+[[blocks]]
+kind = "controls"
+body = '''
+Synthetic panels include agreeing duplicates, conflicting duplicates, same-nonce/different-key controls, distinct-operation reuse, malformed nonce lengths and missing identities. Reordering observations must leave the findings and coverage unchanged. Inject an input-read failure to ensure it cannot become a complete clean result. No plaintext or secret key bytes are required for these controls.
+'''
+
+[[blocks]]
+kind = "example"
+body = '''
+Suppose operations `alpha` and `beta` both use key identity `key-A` and nonce `000000000000000000000007`. That is a reuse witness. A second log line for `alpha` with the same descriptor adds an origin, not another encryption. An operation `gamma` using the same nonce with `key-B` does not join that witness. If the two `alpha` records disagree on the nonce, exclude `alpha` and report incomplete coverage instead of choosing one version.
+'''
+
+[[provenance]]
+path = "archive-c/faultspan/src/checks/c/nonce.c"
+kind = "solver"
+note = "Two heapsort passes, operation deduplication, conflicting-description exclusions and grouped nonce witnesses."
+
+[[provenance]]
+path = "archive-c/faultspan/docs/AUDIT.md"
+kind = "design"
+note = "Input completeness, profile boundaries, retained origins and separate coverage/finding semantics."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Synthetic operation identity, duplicate, conflict, key-rotation and order-invariance checks."

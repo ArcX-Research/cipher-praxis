@@ -2,13 +2,13 @@ id = "digraphic-slide"
 section = "ciphers"
 title = "Digraphic slide ciphers (Slidefair and Portax)"
 subtitle = "Encrypt letter pairs with rectangles between a fixed row and a shifted row"
-status = "CLOSED"
-status_note = "All four direct forms passed their 504-letter controls: Portax and Slidefair with Vigenère, Variant, or Beaufort rules. They found periods 1–12 without hints and matched a source generator byte for byte. Every result for the live 504-letter text scored from -7.42 to -7.58, ruling out these forms there at periods 1–12."
+status = "VERIFIED"
+status_note = "The rectangle maps and directional Slidefair inverse are checked exhaustively on letter pairs. Recorded period-search controls also recovered their planted texts, but a heuristic search miss does not exclude the cipher family."
 family = "Polygraphic substitution"
 tags = ["digraphic", "slide", "periodic", "reciprocal"]
-related = ["porta", "vigenere", "beaufort", "variant-beaufort", "playfair", "two-square-four-square", "g-polygraphic", "g-reciprocal-cipher"]
+related = ["porta", "vigenere", "beaufort", "variant-beaufort", "playfair", "two-square-four-square", "g-polygraphic", "g-reciprocal-cipher", "kat-harness"]
 summary = "Slide ciphers encrypt two letters at a time with a two-row rectangle. The top row is the straight alphabet. A repeating key shifts the bottom row. The plaintext pair marks two corners, and the ciphertext uses the other two, as in Playfair. Portax uses Porta's half-alphabet rectangle instead. Both ciphers need a period search followed by the rectangle rule."
-updated = "2026-09-07"
+updated = "2026-10-06"
 
 [[blocks]]
 kind = "definition"
@@ -43,9 +43,9 @@ body = '''
 kind = "assumptions"
 title = "Assumptions and invariants"
 body = '''
-- Digraph boundaries aligned with the text; period 1 to 12.
+- Digraph boundaries, odd-length padding and key advancement are explicit. The recorded search tested periods 1 to 12; that is a search scope, not a restriction in the cipher definition.
 - The unequal-column Slidefair rectangle rule is an involution; its same-column rule is directional. A fitted key still round-trips under the matching inverse, and that round-trip is an implementation check rather than evidence for the model.
-- Invariant: the first ciphertext letter of a digraph depends only on $b$ and $k$, the second only on $a$ and $k$: the digraph is not mixed the way a Hill block is.
+- For unequal columns the outputs exchange the two rectangle coordinates. The same-column exception tests both input coordinates, so the complete map cannot be treated as two independent one-letter substitutions.
 '''
 
 [[blocks]]
@@ -58,45 +58,42 @@ body = '''
 '''
 
 [[blocks]]
+kind = "attack"
+title = "Cache complete digraph maps"
+body = '''
+For each key value and row rule, cache the bottom row and its inverse-position map. Precompute forward and inverse digraph tables, including the vertical exception. A transform then needs one lookup per digraph, and period search can reuse the same tables across trials. At alphabet size $q$, all $q$ shifts take $O(q^3)$ table entries; keeping only the bottom rows and their inverses uses $O(q^2)$ entries with constant-time arithmetic per pair. Use the latter when the full tables do not justify their memory cost.
+'''
+
+[[blocks]]
 kind = "pseudocode"
 body = '''
 ```text
-// Slidefair: letters are indices 0..25; the top row is the straight alphabet
-// (top[j] = j) and the bottom row is shifted by the key element k = key[i mod
-// P] of digraph number i.
-function BOTTOM(j, k, rule):
-    if rule == Vigenère: return (j + k) mod 26
-    if rule == Variant:  return (j - k) mod 26
-    if rule == Beaufort: return (k - j) mod 26
-
-function SLIDEFAIR_DIGRAPH(a, b, k, rule, decrypt):
-    // column of a in the top row
-    j_a = a
-    // column of b in the bottom row
-    j_b = the column j with BOTTOM(j, k, rule) == b
-    if j_a == j_b:
-        j = (j_a - 1) mod 26 if decrypt else (j_a + 1) mod 26
-        return (top[j], BOTTOM(j, k, rule))
-    // the columns are exchanged
-    return (top[j_b], BOTTOM(j_a, k, rule))
-
-function SLIDEFAIR(text[0..n-1], key[0..P-1], rule, decrypt=false):
-    for i in 0..n/2-1:
-        (out[2i], out[2i+1]) = SLIDEFAIR_DIGRAPH(text[2i], text[2i+1], key[i
-                mod P], rule, decrypt)
+function PREPARE_SLIDEFAIR(key,rule):
+    for each distinct key value k:
+        bottom[k] = the q-entry row defined by rule and k
+        for column = 0..q-1: inverse[k,bottom[k,column]] = column
+        for a,b in 0..q-1:
+            other = inverse[k,b]
+            for direction in {+1,-1}:
+                if a == other:
+                    j = (a+direction) mod q
+                    table[k,direction,a,b] = (j,bottom[k,j])
+                else: table[k,direction,a,b] = (other,bottom[k,a])
+    return table
+function SLIDEFAIR(text,key,table,decrypt):
+    require nonempty key and an even text length under the padding convention
+    direction = -1 if decrypt else +1
+    for pair = 0..length(text)/2-1:
+        k = key[pair mod length(key)]
+        out[2*pair],out[2*pair+1] = table[k,direction,text[2*pair],text[2*pair+1]]
     return out
-
-// Portax: each block of 2P letters is written in two rows of width P; every
-// vertical pair goes through the Porta rectangle with s = floor(pos(key
-// letter) / 2); the same-column case exchanges the rows, so the same routine
-// encrypts and decrypts.
-function PORTAX(text, key[0..P-1]):
-    for each block of 2P letters, rows R0 = block[0..P-1] and R1 =
-            block[P..2P-1]:
-        for col in 0..P-1:
-            (R0[col], R1[col]) = PORTA_RECTANGLE(R0[col], R1[col],
-                    floor(pos(key[col]) / 2))
-    return the rows written back in place
+function PORTAX(text,key):
+    for each complete block of 2*length(key) letters:
+        split the block into equal rows R0,R1
+        for column = 0..length(key)-1:
+            R0[column],R1[column] = PORTA_RECTANGLE(
+                R0[column],R1[column],floor(key[column]/2))
+    return the rows written back in place  // define partial-block handling separately
 ```
 '''
 
@@ -109,7 +106,7 @@ $26^P$ keys per rule and period (13 classes per position for Portax); with $P \l
 [[blocks]]
 kind = "failure_modes"
 body = '''
-- **Period selection on a wrong family.** Live searches selected periods 8, 12, 12 and 11 with rates $-7.58$, $-7.49$, $-7.48$ and $-7.42$: a free period plus key fits nothing but noise.
+- **Period selection on a wrong family.** The recorded searches selected periods 8, 12, 12 and 11 with rates $-7.58$, $-7.49$, $-7.48$ and $-7.42$: these low-scoring outputs were search misses, not exhaustive family exclusions.
 - **Vertical-case conventions.** A source that shifts the vertical case differently produces a different cipher. The program's independent implementation had to match the generator byte for byte.
 '''
 
@@ -136,7 +133,7 @@ bottom row  D E F G H I J K L ...   (j + 3)
 [[blocks]]
 kind = "notes"
 body = '''
-The slide families were audited because a bounded all-family sweep of an external engine timed out before reaching them. The lane's value is the independently verified rectangle algebra and the byte-matched generator, which make its scoped negative reproducible.
+The recorded search supplies control and implementation evidence under its stated budget. Neither completing a period loop nor obtaining a low best score makes a heuristic key search exhaustive. The transform checks and the search outcome have separate scopes.
 '''
 
 [[provenance]]
@@ -154,3 +151,13 @@ note = "Independent Python rectangle transforms, control generation, generator b
 title = "The ACA and You"
 author = "American Cryptogram Association"
 year = 2005
+
+[[provenance]]
+path = "archive-c/Cryptanalysis/fresh-attack-20260912/external_triage/slidefair_reference.py"
+kind = "library"
+note = "Independent row-table implementation of directional Slidefair exceptions."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Every letter pair and shift checked for all three Slidefair row rules."

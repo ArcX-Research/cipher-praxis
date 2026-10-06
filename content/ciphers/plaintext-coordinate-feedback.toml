@@ -147,7 +147,7 @@ note = "Independent derivations, small-ring exhaustive checks, affine completene
 ref = "LOG623"
 
 [[provenance]]
-path = "withmath/logs/623_pk10_plainfeedback_controls_20260905T132430Z_1788614670209629000.log"
+path = "withmath/logs/623_pk10_plainfeedback_controls_20260905T132430Z_1788614670209629000.log.gz"
 kind = "log"
 note = "Frozen target-absent control receipt for the complete 1,300-cell selector."
 ref = "LOG623"

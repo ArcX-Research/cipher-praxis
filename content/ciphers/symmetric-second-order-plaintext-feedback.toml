@@ -161,7 +161,7 @@ note = "Frozen target-absent algebra receipt."
 ref = "LOG630"
 
 [[provenance]]
-path = "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log"
+path = "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz"
 kind = "log"
 note = "Frozen first control panel: every planted algebraic cell selected; one exact emitted-plaintext endpoint failed while its complete sidecar retained the exact completion."
 ref = "LOG632"
@@ -173,7 +173,7 @@ note = "Frozen fresh-panel design, outcome, and independent reconstruction of ev
 ref = "LOG633"
 
 [[provenance]]
-path = "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log"
+path = "withmath/logs/633_pk10_secondorder_plainfeedback_v2_controls_20260905T185614Z_1788634574907215000.log.gz"
 kind = "log"
 note = "Fresh target-absent receipt for structural-cell recovery, exact text, rare-letter traps, neighbouring families, independent symbols, and shuffled nulls."
 ref = "LOG633"

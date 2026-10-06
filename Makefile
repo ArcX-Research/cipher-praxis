@@ -4,7 +4,7 @@ CARGO ?= cargo
 PYTHON ?= python3
 HOST ?= 127.0.0.1
 PORT ?= 8787
-CORPUS_DIR ?= ../Cryptanalysis
+CORPUS_DIR ?= $(if $(wildcard ../Cryptanalysis),../Cryptanalysis,$(HOME)/Projects/Mywork/ArcX-Research/Research/Cryptography/Cryptanalysis)
 
 .DEFAULT_GOAL := help
 
@@ -45,6 +45,7 @@ lint-scripts:
 test:
 	$(CARGO) test --workspace --all-features
 	$(PYTHON) scripts/check_research_algorithms.py
+	$(PYTHON) scripts/check_research_additions.py
 	$(PYTHON) scripts/test_fingerprint_assets.py
 
 content:

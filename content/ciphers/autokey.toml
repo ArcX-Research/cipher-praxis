@@ -6,9 +6,9 @@ status = "CLOSED"
 status_note = "Straight-alphabet plaintext autokey controls passed at 153, 144, and 504 letters for both Vigenère and Beaufort, including exact primer recovery. Tests then ruled out that form on all three texts. The unknown-alphabet ciphertext autokey solved only 10–13% of each 504-letter control, so that test is power-limited."
 family = "Stream and machine ciphers"
 tags = ["autokey", "feedback", "primer", "aperiodic"]
-related = ["vigenere", "beaufort", "porta", "running-key", "condi", "autokey-difference-periodicity", "key-cancellation", "beam-search", "g-autokey-primer"]
+related = ["vigenere", "beaufort", "porta", "running-key", "condi", "autokey-difference-periodicity", "key-cancellation", "beam-search", "g-autokey-primer", "bilinear-feedback-relation", "finite-extension-fields"]
 summary = "An autokey begins with a short primer and extends it using plaintext or ciphertext. Plaintext feedback couples positions separated by the primer length; ciphertext feedback allows the observed ciphertext to remove later key symbols directly. The primer, feedback direction and boundary convention determine the model."
-updated = "2026-09-08"
+updated = "2026-10-06"
 
 [[blocks]]
 kind = "definition"
@@ -37,6 +37,19 @@ body = '''
 '''
 
 [[blocks]]
+kind = "variants"
+title = "Mixed feedback with nonunit memory coefficients"
+body = '''
+A broader delayed recurrence combines both previous plaintext and ciphertext:
+
+$$c_i=u x_i+r_i\quad(i<L),\qquad c_i=u x_i+\alpha x_{i-L}+\beta c_{i-L}+d\quad(i\ge L)\pmod{26}.$$
+
+Only the current-symbol coefficient $u$ must be a unit for sequential decryption with a known primer. The memory coefficients $\alpha$ and $\beta$ may be nonunits, including zero. Decrypt in the declared traversal direction by subtracting the known memory and multiplying by $u^{-1}$. Cache that inverse once; no inverse of $\alpha$ is needed.
+
+An unknown-primer search must preserve independent initial plaintext or primer variables. Backward anchoring that divides by $\alpha$ covers only the unit-memory subfamily. Modulo 2 or 13, a zero memory coefficient may erase information about an initial value without making the alphabet assignment impossible. Keep those free variables or their exact completion family; do not confuse their dimension with the dimension of the projected alphabet image.
+'''
+
+[[blocks]]
 kind = "assumptions"
 title = "Assumptions and invariants"
 body = '''
@@ -59,36 +72,27 @@ body = '''
 kind = "pseudocode"
 body = '''
 ```text
-// Letters are indices 0..25. The primer R has length m. The Vigenère relation
-// is shown; Beaufort uses c[i] = (K[i] - p[i]) mod 26, and Porta selects its
-// table by floor(K[i] / 2).
-function ENCRYPT_PLAINTEXT_AUTOKEY(p[0..n-1], R[0..m-1]):
-    for i in 0..n-1:
-        K[i] = R[i] if i < m else p[i - m]
-        c[i] = (p[i] + K[i]) mod 26
-    return c
-
-function DECRYPT_PLAINTEXT_AUTOKEY(c[0..n-1], R[0..m-1]):
-    for i in 0..n-1:
-        // p[i - m] has already been recovered
-        K[i] = R[i] if i < m else p[i - m]
-        p[i] = (c[i] - K[i]) mod 26
-    return p
-
-// Ciphertext-fed form: the key continues with the ciphertext itself.
-function ENCRYPT_CIPHERTEXT_AUTOKEY(p[0..n-1], R[0..m-1]):
-    for i in 0..n-1:
-        K[i] = R[i] if i < m else c[i - m]
-        c[i] = (p[i] + K[i]) mod 26
-    return c
-
-// Primer-free difference text in an index order a (x = a(c)): plaintext from
-// position m onward.
-function DIFFERENCE_TEXT(c[0..n-1], m, a):
-    for i in m..n-1:
-        // equals a(p[i]) for the true m
-        d[i] = (a(c[i]) - a(c[i - m])) mod 26
-    return d
+function MIXED_FEEDBACK(text,primer,u,alpha,beta,d,decrypt):
+    L = length(primer); require L > 0 and gcd(u,26) == 1
+    inv = INVERSE_MOD(u,26)
+    plain = array of length(text); cipher = array of length(text)
+    for i = 0..length(text)-1:
+        if i < L: memory = primer[i]
+        else: memory = alpha*plain[i-L] + beta*cipher[i-L] + d
+        if decrypt:
+            cipher[i] = text[i]
+            plain[i] = inv*(cipher[i]-memory) mod 26
+        else:
+            plain[i] = text[i]
+            cipher[i] = (u*plain[i]+memory) mod 26
+    return plain if decrypt else cipher
+// Vigenere plaintext autokey: u=1, alpha=1, beta=0, d=0
+// Vigenere ciphertext autokey: u=1, alpha=0, beta=1, d=0
+// Beaufort uses u=-1 with the appropriate feedback source
+function CIPHERTEXT_AUTOKEY_SUFFIX(cipher,L):
+    for i = L..length(cipher)-1:
+        plain[i] = (cipher[i]-cipher[i-L]) mod 26
+    return plain[L..end]  // no primer prefix has been recovered
 ```
 '''
 
@@ -168,3 +172,13 @@ ref = "ck_logs/42_pk9_autokey.log"
 title = "Military Cryptanalysis, Part II"
 author = "William F. Friedman"
 year = 1938
+
+[[provenance]]
+path = "archive-c/k4-nonunit-feedback-20261006/PLAN.txt"
+kind = "note"
+note = "Exact mixed-feedback model and distinction between current-symbol invertibility and nonunit memory."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Synthetic mixed-feedback round trips across every memory coefficient modulo 26."

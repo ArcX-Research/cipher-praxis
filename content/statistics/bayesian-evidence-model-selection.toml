@@ -6,7 +6,7 @@ status = "VERIFIED"
 status_note = "The implementation covers inner models with one, two, or three rotations and averages all coset shifts under a uniform prior. In planted checks, one rotation wins for a plain periodic substitution at z +12.3 against shuffles. Two rotations win for layered controls at z +5.6 to +8.5. Inner spacing is correct for 7 of 8 seeds. Fractionated inner text leaves every family near z 0."
 family = "Bayesian evidence and model selection"
 tags = ["evidence", "marginal likelihood", "model comparison", "Bayes factor", "shift marginalisation"]
-related = ["quadgram-log-likelihood", "index-of-coincidence", "family-wise-null", "selection-overfit-diagnostic", "mixture-inference-under-transposition", "order-free-width-statistic", "expectation-maximisation", "exact-period-alignment", "g-evidence", "g-marginal-likelihood", "g-nats-per-letter"]
+related = ["quadgram-log-likelihood", "index-of-coincidence", "family-wise-null", "selection-overfit-diagnostic", "mixture-inference-under-transposition", "order-free-width-statistic", "expectation-maximisation", "exact-period-alignment", "g-evidence", "g-marginal-likelihood", "g-nats-per-letter", "periodic-key-marginal-likelihood"]
 summary = "Bayesian evidence averages a model’s likelihood over its full declared key prior instead of reporting only the best fit. Model-bank priors and parameter multiplicities affect that average. Evidence comparisons require compatible likelihoods, explicit priors and a matching null model."
 updated = "2026-09-08"
 

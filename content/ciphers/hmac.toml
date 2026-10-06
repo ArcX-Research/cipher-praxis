@@ -1,0 +1,102 @@
+id = "hmac"
+section = "ciphers"
+title = "HMAC"
+subtitle = "Authenticate exact message bytes with a keyed hash construction"
+status = "VERIFIED"
+status_note = "The cached-state procedure is checked against standard-library HMAC and a published SHA-256 test vector. These checks cover tag computation; freshness and application effects require separate controls."
+family = "Hash functions and authentication"
+tags = ["HMAC", "message authentication", "SHA-256", "cached state"]
+related = ["sha256", "aes-gcm", "endpoint-specific-control-contracts", "kat-harness"]
+summary = "HMAC combines a secret key with inner and outer hash computations to authenticate a message. For repeated messages under one key, cache the hash states after their key-pad blocks. Authentication covers the agreed byte representation; it does not encrypt the message or make a valid old message fresh."
+updated = "2026-10-06"
+
+[[blocks]]
+kind = "definition"
+body = '''
+For HMAC-SHA256 the hash block size is 64 bytes and the digest size is 32 bytes. Hash keys longer than one block; then zero-pad the resulting key to 64 bytes, calling it $K_0$. The construction is
+
+$$\operatorname{HMAC}_K(M)=H((K_0\oplus\mathrm{opad})\mathbin\Vert H((K_0\oplus\mathrm{ipad})\mathbin\Vert M)).$$
+
+Here `ipad` repeats byte `36` in hexadecimal and `opad` repeats byte `5c`. Concatenation is over bytes. The API below fixes a full 32-byte tag; another tag length requires an explicit protocol profile.
+'''
+
+[[blocks]]
+kind = "assumptions"
+body = '''
+The two cached contexts are unfinished hash states, including their length counters and buffers. Each has already consumed 64 bytes. Cloning only the eight chaining words and resetting the length would produce wrong padding. Treat the cached contexts as secret material, just like the key.
+
+Define message framing before signing. If a protocol signs a timestamp, delivery identifier and body, encode their boundaries unambiguously and authenticate those exact bytes. Equivalent parsed JSON objects need not have identical encodings. Timestamp acceptance and replay handling are application rules in addition to the MAC check.
+'''
+
+[[blocks]]
+kind = "pseudocode"
+body = '''
+```text
+function PREPARE_HMAC_SHA256(key):
+    if length(key) > 64: key = SHA256(key)
+    padded = key followed by zero bytes to length 64
+    inner = SHA256_INIT(); inner.update(padded XOR repeat_byte(0x36,64))
+    outer = SHA256_INIT(); outer.update(padded XOR repeat_byte(0x5c,64))
+    return (inner, outer)  // preserve byte counts and buffered data
+function TAG(prepared, exact_message_bytes):
+    inside = CLONE(prepared.inner)
+    inside.update(exact_message_bytes)
+    outside = CLONE(prepared.outer)
+    outside.update(inside.finalize())
+    return outside.finalize()
+function VERIFY(prepared, message, supplied_tag):
+    if length(supplied_tag) != 32: return false
+    return CONSTANT_TIME_EQUAL(TAG(prepared,message), supplied_tag)
+```
+'''
+
+[[blocks]]
+kind = "complexity"
+body = '''
+After key preparation, time is linear in the message length and auxiliary hash state is constant size. Caching avoids recompressing the two key-pad blocks for every message. This optimization does not change the tag. It does not justify sharing mutable hash contexts between concurrent requests.
+'''
+
+[[blocks]]
+kind = "failure_modes"
+body = '''
+A public unkeyed digest cannot replace a MAC. Ambiguous framing can authenticate the wrong interpretation of bytes. Parsing and reserializing before verification can silently change the signed message. A rejected request can still be defective if it already changed state; test both its response and its effects. Replaying a correctly signed message passes HMAC unless another layer enforces freshness or idempotency.
+'''
+
+[[blocks]]
+kind = "controls"
+body = '''
+The finite checks cover empty and binary messages, keys shorter and longer than a hash block, and repeated calls from cloned states. Application fixtures separately exercise changed bytes, wrong keys, missing or duplicate signatures, stale timestamps and repeated delivery identifiers. The application's acceptance policy must specify those cases rather than inheriting accidental parser behavior.
+'''
+
+[[blocks]]
+kind = "example"
+body = '''
+RFC 4231 uses a key of twenty `0b` bytes and the eight ASCII bytes `Hi There`. The HMAC-SHA256 tag is `b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7`. Appending a newline changes the authenticated bytes and the expected tag.
+'''
+
+[[provenance]]
+path = "archive-c/faultspan/examples/python/web_signed_requests.py"
+kind = "script"
+note = "Disposable signed-request fixtures separating verification, freshness, retries and actual state effects."
+
+[[provenance]]
+path = "archive-c/faultspan/docs/SIGNED-REQUESTS.md"
+kind = "design"
+note = "Exact-byte verification and separate response/effect contracts."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Cached SHA-256 contexts compared with standard HMAC and the published vector."
+
+[[references]]
+title = "RFC 2104: HMAC — Keyed-Hashing for Message Authentication"
+author = "Hugo Krawczyk, Mihir Bellare and Ran Canetti"
+year = 1997
+url = "https://www.rfc-editor.org/rfc/rfc2104"
+
+[[references]]
+title = "RFC 4231: HMAC-SHA Test Vectors"
+author = "Magnus Nystrom"
+year = 2005
+url = "https://www.rfc-editor.org/rfc/rfc4231"

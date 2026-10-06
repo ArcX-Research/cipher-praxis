@@ -75,7 +75,7 @@ Provenance paths resolve as follows:
 
 | Prefix | Collection |
 | --- | --- |
-| No prefix | `../Cryptanalysis/` (override with `--corpus`) |
+| No prefix | `../Cryptanalysis/`, falling back to `Cryptanalysis/` inside the research root when the adjacent checkout is absent (override with `--corpus`) |
 | `CipherPraxis/` | This repository (override with `--site`) |
 | `archive-a/` | First additional research checkout (override with `--archive-a`) |
 | `archive-b/` | Second additional research checkout (override with `--archive-b`) |
@@ -100,7 +100,8 @@ ciphers: `caesar-shift`, `affine-cipher`, `keyword-mixed-alphabet`, `vigenere`, 
 `gronsfeld`, `baconian`, `ragbaby`, `monome-dinome`, `digrafid`,
 `sympathetic-alphabet-dial`, `plaintext-coordinate-feedback`, `right-to-left-plaintext-feedback`,
 `ciphertext-coordinate-feedback`, `symmetric-second-order-plaintext-feedback`,
-`alternating-velocity-disk-cipher`.
+`alternating-velocity-disk-cipher`, `sha256`, `hmac`, `aes-gcm`, `amsco`, `swagman`,
+`bilinear-feedback-relation`.
 
 algebra: `modular-arithmetic-z26`, `units-mod-26`, `modular-inverse-and-crt`,
 `affine-maps-mod-26`, `permutation-cycles`, `conjugacy-and-gauge`, `dihedral-group`,
@@ -108,7 +109,7 @@ algebra: `modular-arithmetic-z26`, `units-mod-26`, `modular-inverse-and-crt`,
 `all-different-constraints`, `matrix-invertibility-mod-26`, `lcm-of-periods`, `group-actions-on-alphabets`,
 `feedback-state-gauges-and-cells`, `latent-label-identifiability`,
 `reflection-product-cycle-lift`, `semiregular-common-cycle-criterion`,
-`two-dial-translation-factorization`.
+`two-dial-translation-factorization`, `finite-extension-fields`.
 
 cryptanalysis: `kasiski-examination`, `exact-period-alignment`, `coset-shift-recovery`,
 `crib-dragging`, `crib-driven-alphabet-recovery`, `key-cancellation`,
@@ -126,7 +127,8 @@ statistics: `index-of-coincidence`, `coincidence-lag-profile`, `chi-squared-fit`
 `shuffled-null-z-score`, `family-wise-null`, `within-coset-null`, `permutation-test`,
 `power-analysis`, `selection-overfit-diagnostic`, `semi-markov-word-model`,
 `local-language-model-prior`, `english-gate-calibration`, `estimator-standard-error`,
-`n-gram-language-scoring`, `combined-character-word-models`, `lexical-reranking-and-oov-bias`.
+`n-gram-language-scoring`, `combined-character-word-models`, `lexical-reranking-and-oov-bias`,
+`periodic-key-marginal-likelihood`.
 
 search: `simulated-annealing`, `parallel-tempering`, `hill-climbing`, `beam-search`,
 `k-best-lists`, `viterbi-decoding`, `expectation-maximisation`, `coordinate-descent`,
@@ -143,7 +145,7 @@ exact: `constraint-satisfaction-forward-checking`, `cp-sat-and-smt-solvers`,
 `two-involution-component-templates`, `full-residue-anchor-enumeration`,
 `translated-set-packing`, `partial-reflection-phase-equality`,
 `zero-aware-cartesian-product-cap`, `factorial-completion-resource-guards`,
-`selector-fibre-cardinality-invariant`, `best-first-frontier-memory`.
+`selector-fibre-cardinality-invariant`, `best-first-frontier-memory`, `symbolic-codebook-propagation`.
 
 validation: `planted-controls`, `control-first-policy`, `target-absent-controls`,
 `blind-controls`, `power-measurement`, `tautological-gate-rule`, `valid-model-nulls`,
@@ -151,7 +153,8 @@ validation: `planted-controls`, `control-first-policy`, `target-absent-controls`
 `correction-and-retraction`, `selection-overfit-check`, `throughput-fail`, `held-out-gates`,
 `gauge-defect-invalidation`, `endpoint-specific-control-contracts`,
 `fresh-holdout-after-selector-change`, `commit-before-reveal-evaluation`,
-`joint-statistic-release-gates`, `evidence-scope-ladder`, `immutable-artifact-postmortem`.
+`joint-statistic-release-gates`, `evidence-scope-ladder`, `immutable-artifact-postmortem`,
+`nonce-reuse-audit`.
 
 engineering: `numpy-instrument-pattern`, `compiled-hot-cores`, `kat-harness`, `seed-determinism`,
 `drainability-and-throughput`, `isolated-acquisition-solver-handoff`,

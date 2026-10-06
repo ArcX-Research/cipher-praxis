@@ -6,9 +6,9 @@ status = "VERIFIED"
 status_note = "The one-position-per-letter rule turns a linear system over Z26 into a decision. Rank alone rejected none of 40 wrong crib pairs. The CRT version matched brute force across 538,656 solutions with 0 errors. Exact solvers using it passed 32/32 planted controls and produced exact negatives within stated scopes."
 family = "Combinatorial constraints"
 tags = ["all-different", "bijection", "CSP", "forward checking", "enumeration"]
-related = ["modular-inverse-and-crt", "finite-field-linear-algebra", "permutation-cycles", "permutation-keystream", "residue-class-graphs", "all-different-enumeration", "constraint-satisfaction-forward-checking", "maximum-weight-bipartite-assignment", "exact-chain-oracle", "word-prefix-csp", "corpus-bank-screen", "crib-driven-alphabet-recovery", "g-all-different", "g-nullity"]
+related = ["modular-inverse-and-crt", "finite-field-linear-algebra", "permutation-cycles", "permutation-keystream", "residue-class-graphs", "all-different-enumeration", "constraint-satisfaction-forward-checking", "maximum-weight-bipartite-assignment", "exact-chain-oracle", "word-prefix-csp", "corpus-bank-screen", "crib-driven-alphabet-recovery", "g-all-different", "g-nullity", "symbolic-codebook-propagation", "swagman"]
 summary = "An unknown cipher alphabet gives each letter its own position. Any answer must therefore satisfy an AllDifferent constraint. Assigned-value collision checks are only the first layer: Hall's condition or a covering bipartite matching can reject a partial branch even before any two assigned letters collide. Modular equations, CRT structure, and matching feasibility can be maintained together during exact search."
-updated = "2026-09-07"
+updated = "2026-10-06"
 
 [[blocks]]
 kind = "definition"
@@ -28,6 +28,21 @@ $$\left|\bigcup_{x\in S}D_x\right|\ge |S|\qquad\text{for every set of letters }S
 For a finite bipartite domain graph, this condition is equivalent to a matching that covers every unassigned letter. A failed covering-matching test is therefore an exact rejection. Passing it proves extendability for the current domains alone; other modular equations may still fail later.
 - **Key-free shadow.** Bijectivity of $z$ implies, within one key class, $C_i = C_j \Leftrightarrow P_i = P_j$. The equality partitions of ciphertext and plaintext must agree. This is the necessary condition tested before any algebra.
 - **Cycle-type shadow.** A single 26-cycle solution must have no closed sub-cycle in any partial map (see [Permutation cycles](/algebra/permutation-cycles)).
+'''
+
+[[blocks]]
+kind = "variants"
+title = "A constant-size Hall test for ternary coordinate words"
+body = '''
+For a three-coordinate word over three values, within-word equalities restrict its numeric domain to one of five kinds: the all-equal diagonal $D$ (three cells), one of the equality planes $01$, $02$ or $12$ (nine cells each), or the unrestricted set (27 cells). A plane includes the diagonal: these are required equalities, not assertions that every other coordinate differs.
+
+Let their counts be $n_D,n_{01},n_{02},n_{12},n_F$. A matching of distinct words to distinct cells exists exactly when the total count is at most 27 and
+
+$$n_D+\max(0,n_{01}-6)+\max(0,n_{02}-6)+\max(0,n_{12}-6)\le3.$$
+
+Each plane has six cells outside the diagonal; these three exclusive sets are disjoint. Use those cells first, place the remaining restricted words on the three diagonal cells, then place unrestricted words in any unused cells. The same capacity argument proves necessity. This replaces generic matching only for these exact domain shapes. Shared variables between words and additional restrictions still require other checks.
+
+For binary coordinate words, a useful sufficient shortcut is that the number of restricted words does not exceed the smallest restricted-domain size, provided the total number of words does not exceed the cell count. Then every subset's union has enough cells. Otherwise run exact matching; do not reject merely because the shortcut fails. [Symbolic codebook propagation](/exact/symbolic-codebook-propagation) handles shared-variable implications that these domain tests omit.
 '''
 
 [[blocks]]
@@ -53,32 +68,27 @@ body = '''
 kind = "pseudocode"
 body = '''
 ```text
-function INJECTIVE(z):
-    used = empty set
-    for each assigned letter x:
-        if z[x] in used: return false
-        add z[x] to used
-    return true
+function INJECTIVE(values):
+    return size(set(values)) == size(values)
 function IS_PERMUTATION_CRT(z):
-    for r in 0..12:
-        carriers = { x : z[x] mod 13 == r }
-        if |carriers| != 2: return false
-        (x, y) = the two carriers
-        if z[x] mod 2 == z[y] mod 2: return false
+    for residue = 0..12:
+        carriers = letters x with z[x] mod 13 == residue
+        if size(carriers) != 2: return false
+        if the two carriers have the same parity: return false
     return true
-
-function HALL_FEASIBLE(domains of unassigned letters):
-    graph = edge (letter x, position y) whenever y is in domains[x]
-    matching = MAXIMUM_CARDINALITY_BIPARTITE_MATCHING(graph)
-    return SIZE(matching) == NUMBER_OF_UNASSIGNED_LETTERS
-
-function EQUALITY_PARTITION_GATE(C, P, S):
-    for i in S, j in S with i < j:
+function HALL_FEASIBLE(domains):
+    if domains have exactly the five ternary equality-domain shapes:
+        (diag,pair01,pair02,pair12,free) = CLASS_COUNTS(domains)
+        overflow = sum(max(0,count-6) for count in [pair01,pair02,pair12])
+        return size(domains) <= 27 and diag+overflow <= 3
+    matching = MAXIMUM_CARDINALITY_MATCHING(domains)
+    return size(matching) == size(domains)
+function EQUALITY_PARTITION_GATE(C,P,positions):
+    for i,j in positions with i < j:
         if (C[i] == C[j]) != (P[i] == P[j]): return REJECT
     return PASS
-
-function PARTIAL_BRANCH_FEASIBLE(z, domains, modular_state):
-    if not INJECTIVE(z): return REJECT
+function PARTIAL_BRANCH_FEASIBLE(assigned,domains,modular_state):
+    if not INJECTIVE(assigned): return REJECT
     if not HALL_FEASIBLE(domains): return REJECT
     result = CRT_FEASIBLE(modular_state)
     if result exceeded its cap: return DEFER
@@ -188,3 +198,13 @@ year = 1994
 title = "Constraint Processing"
 author = "Rina Dechter"
 year = 2003
+
+[[provenance]]
+path = "archive-c/k4-coordinate-hall-beam-20261006/PLAN.txt"
+kind = "note"
+note = "Derivation of the ternary Hall formula and binary restricted-domain shortcut."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Finite ternary domain counts checked against an independent augmenting-path matcher."

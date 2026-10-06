@@ -105,7 +105,8 @@ year = 1967
 url = "https://…"               # optional
 ```
 
-Unprefixed provenance paths resolve under `../Cryptanalysis`. `archive-a/`, `archive-b/` and
+Unprefixed provenance paths resolve under `../Cryptanalysis`, falling back to the relocated
+`Cryptanalysis` directory inside the research root when the adjacent checkout is absent. `archive-a/`, `archive-b/` and
 `archive-c/` resolve under the additional local research collections; `CipherPraxis/` resolves
 under this repository. `scripts/check_provenance.py` accepts overrides for all five roots. These aliases
 are archival identifiers and do not define the public subject or taxonomy of an article.

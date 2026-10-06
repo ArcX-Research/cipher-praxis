@@ -148,12 +148,12 @@ The construction is the natural extension of the two-key [compound periodic key]
 '''
 
 [[provenance]]
-path = "archive-c/pk8-solution/pk8_solution.py"
+path = "archive-c/Cryptanalysis/pk8-solution/pk8_solution.py"
 kind = "solver"
 note = "Self-contained re-derivation: the four-keyword model over one keyed alphabet, keystream period 420 > 153, degree 18 with 84.6 bits, re-encryption check, crib-slide re-enactment and gauge search; ends with an assertion that re-encryption reproduces the recorded ciphertext."
 
 [[provenance]]
-path = "archive-c/pk8-solution/README.md"
+path = "archive-c/Cryptanalysis/pk8-solution/README.md"
 kind = "note"
 note = "Solution record for the 153-letter corpus text: cipher description, the exact scheduler command and environment of the winning job, score comparison against the next-best job and planted true plaintexts."
 
@@ -164,7 +164,7 @@ note = "Five planted crib controls (degrees 10, 16, 26, 29, 52): exact plaintext
 ref = "mixed-crib-controls.log"
 
 [[provenance]]
-path = "archive-a/mixed-crib-controls.log"
+path = "archive-c/Cryptanalysis/pk8-research/logs/mixed-cribs/mixed-crib-controls.log"
 kind = "log"
 note = "ALL_MIXED_ANYWHERE_CRIB_CONTROLS_PASS; the scheduler asserts this marker before starting."
 

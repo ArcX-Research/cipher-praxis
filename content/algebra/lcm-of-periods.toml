@@ -222,7 +222,7 @@ kind = "audit"
 note = "Row-stream decimation q = p/gcd(p,2)."
 
 [[provenance]]
-path = "archive-c/pk8-solution/pk8_solution.py"
+path = "archive-c/Cryptanalysis/pk8-solution/pk8_solution.py"
 kind = "solver"
 note = "ALGEBRA section: rank 18 / nullity 4 over GF(2) and GF(13) from the 153 known-plaintext rows; kernel = three constant transfers plus the period-4/period-6 alternation; 18-letter crib rows have rank 18 so the keystream is unique; CRT lift; wrong-plaintext negative control inconsistent over both fields; word_gauge_search() over 26^4 gauge points x two signs against the system word list with a uniqueness assertion; the raw solver components and their keyword reading are recorded in the same file."
 
@@ -247,7 +247,7 @@ kind = "script"
 note = "recover(): exact key solve from a plaintext/ciphertext pair over both fields with re-encryption; the source of the raw components in the solver's sign convention."
 
 [[provenance]]
-path = "archive-c/pk8-solution/README.md"
+path = "archive-c/Cryptanalysis/pk8-solution/README.md"
 kind = "note"
 note = "Keyword table of the solved text and the equivalence between four keyword layers and one summed keystream."
 

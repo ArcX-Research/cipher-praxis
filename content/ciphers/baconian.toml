@@ -6,7 +6,7 @@ status = "UNTESTED"
 status_note = "The standard 24-letter construction is documented by the American Cryptogram Association, and the repository contains a bounded multi-class extractor. It has no dedicated planted-control panel or qualified hidden-message detector."
 family = "Steganographic encodings"
 tags = ["binary code", "biliteral", "cover text", "steganography", "two classes"]
-related = ["book-cipher", "frequency-analysis", "exhaustive-enumeration", "family-wise-null"]
+related = ["book-cipher", "frequency-analysis", "exhaustive-enumeration", "family-wise-null", "symbolic-codebook-propagation"]
 summary = "Baconian encoding writes every secret letter as five choices between two symbols, often called a and b. Those choices can be hidden in two typefaces, two alphabets, or any other visible binary property of a cover message. Solving means identifying the property, polarity, starting offset, and five-symbol grouping."
 updated = "2026-09-05"
 

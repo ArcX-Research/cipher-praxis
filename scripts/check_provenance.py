@@ -7,9 +7,11 @@ from pathlib import Path
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check that content provenance paths exist")
     parser.add_argument("--content", type=Path, default=Path("content"))
-    parser.add_argument("--corpus", type=Path, default=Path("../Cryptanalysis"))
     parser.add_argument("--site", type=Path, default=Path("."))
     research_root = Path.home() / "Projects/Mywork/ArcX-Research/Research/Cryptography"
+    adjacent_corpus = Path("../Cryptanalysis")
+    default_corpus = adjacent_corpus if adjacent_corpus.is_dir() else research_root / "Cryptanalysis"
+    parser.add_argument("--corpus", type=Path, default=default_corpus)
     parser.add_argument("--archive-a", type=Path, default=research_root / "pk8-research")
     parser.add_argument("--archive-b", type=Path, default=research_root / "pk9pk10-research")
     parser.add_argument("--archive-c", type=Path, default=research_root)

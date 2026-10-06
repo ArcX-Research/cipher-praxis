@@ -6,7 +6,7 @@ status = "VERIFIED"
 status_note = "The cyclic dynamic program is exact within each frozen per-residue shortlist. Additive and Porta controls passed at the stated lengths; period-7 affine controls passed, but the period-26 affine control selected a false readable state. The shortlist plus local polish is not a global search of the full key product, so the recorded low scores are empirical screen results rather than exact family exclusions."
 family = "Dynamic programming"
 tags = ["periodic key", "cyclic DP", "shortlist", "within-coset null", "porta", "affine"]
-related = ["viterbi-decoding", "exact-dynamic-programming", "k-best-lists", "coordinate-descent", "vigenere", "beaufort", "porta", "affine-cipher", "affine-maps-mod-26", "within-coset-null", "valid-model-nulls", "planted-controls", "g-coset"]
+related = ["viterbi-decoding", "exact-dynamic-programming", "k-best-lists", "coordinate-descent", "vigenere", "beaufort", "porta", "affine-cipher", "affine-maps-mod-26", "within-coset-null", "valid-model-nulls", "planted-controls", "g-coset", "periodic-key-marginal-likelihood"]
 summary = "Given a text zone and period, single-letter likelihood makes a finite map shortlist for each residue. A cyclic quadgram dynamic program finds the exact best key within that Cartesian product. A subsequent coordinate and adjacent-pair polish is local search: it may add omitted maps but does not certify the optimum over the unrestricted key family. Within-coset shuffles calibrate the same selected pipeline empirically."
 updated = "2026-09-07"
 

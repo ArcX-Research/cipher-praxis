@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-06",
+  "scope": "Synthetic proof modes only; no research ciphertexts or recovery campaigns",
+  "source_checks": [
+    {
+      "source": "archive-c/k4-binary-parity-closure-20261006/closure.cpp",
+      "sha256": "5a84ca706bad5ade54cfd1fced8051af7a8242c23d57c030b728f1c54cd6a943",
+      "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+      "flags": [
+        "-O2",
+        "-std=c++17"
+      ],
+      "mode": "--synthetic",
+      "exit_code": 0,
+      "result": {
+        "cases": 4096,
+        "satisfiable": 3387,
+        "propagation_contradictions": 182,
+        "numeric_assignments_checked": 616664,
+        "inferred_relations": 558,
+        "complete": true
+      }
+    },
+    {
+      "source": "archive-c/k4-ternary-color-closure-20261006/closure.cpp",
+      "sha256": "8ea6694f6858e10070a6961e8da1ce9163115aca70080882bd5a3bcf110481ce",
+      "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+      "flags": [
+        "-O2",
+        "-std=c++17"
+      ],
+      "mode": "--proof",
+      "exit_code": 0,
+      "result": {
+        "cases": 768,
+        "satisfiable": 518,
+        "propagation_rejections": 250,
+        "numeric_assignments_checked": 416628,
+        "inferred_relations": 1414,
+        "complete": true
+      }
+    }
+  ]
+}

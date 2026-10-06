@@ -6,7 +6,7 @@ status = "CLOSED"
 status_note = "Exact solvers recovered hidden planted mnemonics, their alphabet cycle, and their shifts. Tests covered 12 to 24 words written as unique four-letter prefixes or full words under period-2, -4, or -7 keyed ciphers. Every stated live search finished with zero answers. Other source lists, padded three-letter words, and an unknown alphabet under seven free shifts remain open."
 family = "Modern and encoding schemes"
 tags = ["mnemonic", "word list", "checksum", "structured key", "exact search"]
-related = ["quagmire-iii", "quagmire-iv", "keyword-mixed-alphabet", "word-prefix-csp", "constraint-satisfaction-forward-checking", "modular-inverse-and-crt", "all-different-enumeration", "shared-cycle-attack", "g-mixed-alphabet"]
+related = ["quagmire-iii", "quagmire-iv", "keyword-mixed-alphabet", "word-prefix-csp", "constraint-satisfaction-forward-checking", "modular-inverse-and-crt", "all-different-enumeration", "shared-cycle-attack", "g-mixed-alphabet", "sha256"]
 summary = "A standard mnemonic stores 128 to 256 random bits as 12 to 24 words from a fixed list of 2,048. Each word carries 11 bits, and the last word includes a hash checksum. Four letters suffice to identify every list word of length at least four; the 103 three-letter words need a separate fixed-width convention. Exact solvers tested declared layouts beneath repeating keyed ciphers and enforced the checksum as a rule, not just a score."
 updated = "2026-09-08"
 

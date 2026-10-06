@@ -6,7 +6,7 @@ status = "VERIFIED"
 status_note = "Several checks support column recovery. A full search of 9! orders passed 23/24 development controls. An order-free width test solved 4/4 planted layered ciphers from a cold start. Two 504-letter width-9 controls over a periodic layer were recovered exactly. The general cascade also re-solved transpositions in earlier solved texts."
 family = "Transposition"
 tags = ["transposition", "columnar", "keyword order", "width"]
-related = ["route-transposition", "myszkowski", "rail-fence", "sandwich-construction", "transposition-width-recovery", "order-free-width-statistic", "mixture-inference-under-transposition", "exact-dynamic-programming", "transposed-running-key-endpoint-scoring", "all-different-constraints", "columnar-lab", "g-transposition-grid", "joint-transposition-periodic-search"]
+related = ["route-transposition", "myszkowski", "rail-fence", "sandwich-construction", "transposition-width-recovery", "order-free-width-statistic", "mixture-inference-under-transposition", "exact-dynamic-programming", "transposed-running-key-endpoint-scoring", "all-different-constraints", "columnar-lab", "g-transposition-grid", "joint-transposition-periodic-search", "amsco", "swagman"]
 summary = "A columnar transposition writes the message in rows of a chosen width, then reads columns in an order set by a keyword. The letters do not change, so their total frequencies stay the same. The task is to recover the width and column order. Tests checked every order at width 9, used annealing at larger widths, and used an order-free statistic to find the width when the transposition sat between two substitutions."
 updated = "2026-09-08"
 

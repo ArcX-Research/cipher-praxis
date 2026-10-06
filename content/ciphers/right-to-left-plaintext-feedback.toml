@@ -147,7 +147,7 @@ note = "Frozen distinct-branch definition, exhaustive KAT coverage, complete tar
 ref = "LOG626"
 
 [[provenance]]
-path = "withmath/logs/626_pk10_reverse_plainfeedback_controls_20260905T140910Z_1788617350010726000.log"
+path = "withmath/logs/626_pk10_reverse_plainfeedback_controls_20260905T140910Z_1788617350010726000.log.gz"
 kind = "log"
 note = "Frozen complete control receipt for the 728-cell reverse branch."
 ref = "LOG626"

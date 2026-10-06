@@ -69,12 +69,13 @@ does not verify its contents or repeat the experiment. Historical measurements r
 from their recorded conditions unless an independent replay is documented.
 
 Public articles lead with cryptography and literature. Supporting research records are available
-in a separate disclosure. The [research review](content/RESEARCH_REVIEW_2026-09-08.md) records the
+in a separate disclosure. The [research review](content/RESEARCH_REVIEW_2026-10-06.md) records the
 latest additions, merges and limits of the source audit. Extend the existing canonical article
 when a source adds a variant, optimization or correction to an already documented method.
 
-Provenance paths without an alias resolve under `../Cryptanalysis`; `CipherPraxis/` resolves in
-this repository. The `archive-a/`, `archive-b/` and `archive-c/` aliases identify the three
+Provenance paths without an alias resolve under `../Cryptanalysis`, or the relocated
+`Cryptanalysis` directory inside the research root when the adjacent checkout is absent.
+`CipherPraxis/` resolves in this repository. The `archive-a/`, `archive-b/` and `archive-c/` aliases identify the three
 additional local research collections. To use different checkout locations, run:
 
 ```bash

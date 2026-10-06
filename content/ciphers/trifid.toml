@@ -6,7 +6,7 @@ status = "CLOSED"
 status_note = "Direct 504-letter Trifid tests covered periods 2–40 and solved 2/2 arbitrary-cube controls exactly. Shared-cube tests across 153- and 144-letter texts passed 3/3 fixed-period and 3/3 period-selection controls. Those forms were ruled out for the project texts. Trifid beneath another periodic layer failed all four controls and is power-limited."
 family = "Fractionation"
 tags = ["fractionation", "cube", "27 symbols", "period"]
-related = ["bifid", "digrafid", "playfair", "polybius-square", "simulated-annealing", "known-answer-tests", "conjugacy-and-gauge", "g-fractionation", "g-period"]
+related = ["bifid", "digrafid", "playfair", "polybius-square", "simulated-annealing", "known-answer-tests", "conjugacy-and-gauge", "g-fractionation", "g-period", "symbolic-codebook-propagation"]
 summary = "Trifid places 26 letters and one extra symbol in a 3 x 3 x 3 cube. Each letter becomes three base-3 coordinates. Within a block, the cipher writes all first coordinates, then all second coordinates, then all third coordinates, and groups them back into threes. It is a three-dimensional form of Bifid. Tests checked a known answer, matched a separate generator byte for byte, and covered direct, shared-cube, and layered forms."
 updated = "2026-09-07"
 

@@ -1,0 +1,96 @@
+id = "amsco"
+section = "ciphers"
+title = "AMSCO transposition"
+subtitle = "Read keyed columns whose cells alternate between one and two letters"
+status = "VERIFIED"
+status_note = "The route is a permutation by construction. Synthetic tests check both starting cell sizes, even and odd widths, incomplete rows and an independently laid-out grid; this establishes the transform, not key recovery."
+family = "Transposition"
+tags = ["transposition", "AMSCO", "ragged columns", "cached route"]
+related = ["columnar-transposition", "myszkowski", "swagman", "joint-transposition-periodic-search", "incremental-language-score"]
+summary = "AMSCO writes plaintext into cells containing alternately one and two letters, then reads the columns in key order. Its checkerboard alternation depends on both row and column. Cache the cell geometry and column lengths for a fixed text length and width so key trials only change the readout order."
+updated = "2026-10-06"
+
+[[blocks]]
+kind = "definition"
+body = '''
+For width $w$, row $r$, column $c$ and start flag $s\in\{0,1\}$, the cell capacity is $1+((r+c+s)\bmod2)$. Fill cells from left to right, row by row, stopping when the plaintext ends; truncate the last cell if necessary. Let $\pi$ list the physical columns in their ciphertext readout order. Read each selected column from top to bottom, preserving the order of letters within every cell.
+
+The start flag selects a one-letter or two-letter first cell. The key convention is an explicit permutation of column indices; a keyword needs a declared tie-breaking rule before it can produce that permutation.
+'''
+
+[[blocks]]
+kind = "variants"
+body = '''
+A continuous alternating stream of cell sizes is a different convention at even widths: after a full row it can repeat the first-column size, whereas the checkerboard rule changes it. Record that alternative separately. AMSCO also differs from [Myszkowski](/ciphers/myszkowski), where repeated column ranks change the order of reading letters rather than the cell capacities.
+'''
+
+[[blocks]]
+kind = "attack"
+body = '''
+For each length, width and start flag, precompute the plaintext positions belonging to each column. Reordering these lists gives the exact route for each key. Ciphertext segment lengths are the cached column lengths in key order. Rank routes under a declared language score and independently re-encrypt each candidate. Retaining only a top-scoring bank before a stronger rescore is heuristic unless omitted routes have valid bounds for that stronger objective.
+'''
+
+[[blocks]]
+kind = "pseudocode"
+body = '''
+```text
+function COLUMN_GEOMETRY(n,w,start):
+    require w > 0 and start in {0,1}
+    columns = w empty lists; at = 0; cell = 0
+    while at < n:
+        row = cell div w; col = cell mod w
+        size = min(n-at, 1 + ((row+col+start) mod 2))
+        append positions at .. at+size-1 to columns[col]
+        at += size; cell += 1
+    return columns  // cache by (n,w,start), independently of the key
+function TRANSFORM(text,columns,read_order,decrypt):
+    require read_order is a permutation of the column indices
+    route = concatenate columns[col] for col in read_order
+    output = array of length(text)
+    for j = 0..length(text)-1:
+        if decrypt: output[route[j]] = text[j]
+        else: output[j] = text[route[j]]
+    return output
+```
+'''
+
+[[blocks]]
+kind = "complexity"
+body = '''
+Geometry costs $O(n+w)$ time and storage. A transform using an explicit column order costs $O(n+w)$; keyword sorting adds $O(w\log w)$ if it has not already been done. Unrestricted column orders form a space of $w!$ descriptions, although empty columns can make several descriptions observationally identical.
+'''
+
+[[blocks]]
+kind = "failure_modes"
+body = '''
+Treating all columns as equal length breaks decryption at incomplete rows. Alternating by a global cell counter silently selects the stream convention at even widths. Padding, start size, key direction and keyword ties must be explicit. A permutation round trip alone cannot detect two implementations sharing the same wrong convention.
+'''
+
+[[blocks]]
+kind = "example"
+body = '''
+Write `ABCDEFGHIJKLM` at width four, starting with a single letter:
+
+```trace
+row  A   BC  D   EF
+row  GH  I   JK  L
+row  M
+```
+
+The column strings are `AGHM`, `BCI`, `DJK`, `EFL`. Reading zero-based columns $(2,0,3,1)$ gives `DJKAGHMEFLBCI`. Decryption splits that ciphertext into lengths $(3,4,3,3)$ and scatters the pieces back into the same cells.
+'''
+
+[[provenance]]
+path = "archive-c/Cryptanalysis/scripts/pk_partition_transposition.py"
+kind = "solver"
+note = "Independent route replay and separation of checkerboard and stream alternation, including the even-width convention check."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Synthetic hand grid and finite route-bijection/round-trip checks."
+
+[[references]]
+title = "AMSCO cipher description"
+author = "American Cryptogram Association"
+url = "https://www.cryptogram.org/downloads/aca.info/ciphers/Amsco.pdf"

@@ -1,0 +1,99 @@
+id = "periodic-key-marginal-likelihood"
+section = "statistics"
+title = "Exact periodic-key marginal likelihood"
+subtitle = "Integrate over all repeating keys with a log-domain transfer matrix"
+status = "VERIFIED"
+status_note = "Transfer-matrix results are compared with complete key enumeration on small alphabets, including one-position periods and unused key coordinates. Exactness is conditional on the fixed Markov model, maps and uniform key prior."
+family = "Model evidence"
+tags = ["marginal likelihood", "periodic key", "transfer matrix", "sum-product"]
+related = ["bayesian-evidence-model-selection", "periodic-substitution-dp", "n-gram-language-scoring", "sum-of-periodic-keys", "lcm-of-periods", "family-wise-null", "search-safe-partial-marginal-evidence"]
+summary = "The best key score and the probability averaged over keys answer different questions. For a first-order language model and a repeating substitution key, position factors can be accumulated into small matrices. A log-sum-exp matrix product integrates the complete key space without enumerating every key."
+updated = "2026-10-06"
+
+[[blocks]]
+kind = "definition"
+body = '''
+Fix alphabet size $q$, period $p\ge1$, a nonempty ciphertext, and positionwise decryption permutations $D_i(k)$ indexed by the key value $k$. A key $k_0,\ldots,k_{p-1}$ yields $x_i=D_i(k_{i\bmod p})$. Let $\pi$ be a normalized initial-symbol distribution and $T$ a row-normalized transition matrix. Then
+
+$$L(k)=\pi(x_0)\prod_{i=0}^{n-2}T(x_i,x_{i+1}),\qquad Z=q^{-p}\sum_k L(k).$$
+
+This is a declared Markov likelihood and uniform key prior. It is not the probability that a message is meaningful, and a maximum over keys cannot substitute for the average.
+'''
+
+[[blocks]]
+kind = "equations"
+title = "Factorization on the key cycle"
+body = '''
+For key residue $r$, accumulate
+
+$$F_r(a,b)=\sum_{\substack{0\le i<n-1\\i\bmod p=r}}\log T(D_i(a),D_{i+1}(b)).$$
+
+Add $\log\pi(D_0(a))$ to every entry $F_0(a,b)$. Let $M_r(a,b)=\exp F_r(a,b)$. Summing over the repeated key variables gives $Z=q^{-p}\operatorname{tr}(M_0M_1\cdots M_{p-1})$.
+
+The cycle closes the **key variables**. It does not add a transition from the last plaintext symbol back to the first. For $p=1$, only diagonal entries contribute. Unused key coordinates are integrated out by the same normalization.
+'''
+
+[[blocks]]
+kind = "variants"
+title = "Two additive periods without duplicate effective keys"
+body = '''
+For a monogram model with effective key $A_{i\bmod a}+B_{i\bmod b}$, let $g=\gcd(a,b)$. In each residue class modulo $g$, add a constant to every $A$ coordinate and subtract it from every $B$ coordinate. This leaves the effective stream unchanged. Fix one $A$ coordinate in each class to zero; the number of distinct full-period effective keys is $q^{a+b-g}$. On a shorter observed prefix, further keys can look identical; retain their prior multiplicity in the sum.
+
+After this gauge choice, enumerate the smaller free component side and sum each coordinate on the other side independently, conditional on that assignment. Multiply the independent residue-class contributions, with the matching uniform normalization. This is exact for the factorized monogram objective; a bigram objective introduces additional dependencies. The finite checks compare the gauge calculation with the complete component-key average.
+'''
+
+[[blocks]]
+kind = "pseudocode"
+body = '''
+```text
+function PERIODIC_LOG_EVIDENCE(cipher,p,q,decrypt,initial,transition):
+    require length(cipher) > 0 and p >= 1
+    F = p matrices of q by q zeros
+    for i = 0..length(cipher)-2:
+        r = i mod p
+        for a,b in 0..q-1:
+            F[r,a,b] += log(transition[decrypt(i,a),decrypt(i+1,b)])
+    for a,b in 0..q-1: F[0,a,b] += log(initial[decrypt(0,a)])
+    B[a,b] = 0 if a == b else negative_infinity
+    for r = 0..p-1:
+        for start,next in 0..q-1:
+            C[start,next] = LOGSUMEXP(B[start,mid]+F[r,mid,next]
+                                     for mid in 0..q-1)
+        B = C
+    return LOGSUMEXP(B[a,a] for a in 0..q-1) - p*log(q)
+// LOGSUMEXP uses max subtraction; all-negative-infinity input returns -infinity
+```
+'''
+
+[[blocks]]
+kind = "complexity"
+body = '''
+Building factors costs $O(nq^2)$. Dense log-domain matrix products cost $O(pq^3)$, replacing enumeration of $q^p$ keys. Stored factors need $O(pq^2)$ memory and each product needs $O(q^2)$ workspace. Replacing log-sum-exp by maximum computes the best likelihood with the same factors, but it is a different statistic and requires traceback for a key.
+'''
+
+[[blocks]]
+kind = "failure_modes"
+body = '''
+Unnormalized score tables give a partition score rather than a likelihood. Adding a plaintext wraparound edge changes the model. Dropping the key-prior factor favors larger key spaces. Taking the best alphabet, period or segmentation after inspecting data adds a selection step that must be covered by the prior or repeated in the null experiment. Exact key integration does not remove language-model misspecification.
+'''
+
+[[blocks]]
+kind = "example"
+body = '''
+If each position has its own independent uniform additive key ($p=n$), averaging over keys ranges uniformly over all $q^n$ plaintext strings. A normalized Markov model sums to one over those strings, so $Z=q^{-n}$ for every ciphertext. This identity is a useful check on normalization, the initial factor and the absence of an extra plaintext closing edge.
+'''
+
+[[provenance]]
+path = "archive-c/pk9-structure-20260929/segment_probe.py"
+kind = "solver"
+note = "Float64 reference log-sum-exp and max-plus transfer products, key traceback and independent forward replay."
+
+[[provenance]]
+path = "archive-c/pk9-structure-20260929/period-sum-evidence-proof.md"
+kind = "note"
+note = "Gauge dimension and factorization of the exact two-period monogram evidence."
+
+[[provenance]]
+path = "CipherPraxis/scripts/check_research_additions.py"
+kind = "script"
+note = "Complete-key comparisons, independent-key identity and gauge-normalized two-period evidence checks."

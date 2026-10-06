@@ -213,7 +213,7 @@ kind = "data"
 note = "Crib-solve negatives on the 144-letter text at periods {4, 5, 6, 7}: eight cells complete, bests -1181 to -1213."
 
 [[provenance]]
-path = "archive-c/pk8-solution/pk8_solution.py"
+path = "archive-c/Cryptanalysis/pk8-solution/pk8_solution.py"
 kind = "solver"
 note = "Recovered key of the 153-letter text (components of periods 4, 5, 6, 7) that accounts for the observed component-period lags."
 

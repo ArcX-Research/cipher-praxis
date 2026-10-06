@@ -127,7 +127,7 @@ note = "Separates algebraic-cell identifiability, observable equality classes, s
 ref = "LOG630"
 
 [[provenance]]
-path = "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log"
+path = "withmath/logs/632_pk10_secondorder_plainfeedback_controls_20260905T150700Z_1788620820729932000.log.gz"
 kind = "log"
 note = "Frozen control receipt: all planted cells selected; one emitted mapping produced two letter errors while the exact completion remained in the sidecar."
 ref = "LOG632"
