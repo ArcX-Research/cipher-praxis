@@ -1,5 +1,5 @@
 /* Cipher Praxis — A Dilate Cryptography Knowledge Base
-   Dilate navy and blue with white reading surfaces.
+   Dilate navy and blue with white reading surfaces and light gray navigation.
    Adamina headings, Geist UI/body, DM Mono data/code.
    Typography follows the Dilate Framer project's article styles. */
 
@@ -23,12 +23,13 @@
   --danger-line: #efcaca;
   --glass: #ffffff;
   --glass-border: var(--hair);
-  --nav-ink: #ffffff;
-  --nav-muted: #b9b9cc;
-  --nav-accent: #a3bfff;
-  --nav-line: rgba(255, 255, 255, 0.16);
-  --nav-hover: rgba(255, 255, 255, 0.08);
-  --nav-active: rgba(163, 191, 255, 0.16);
+  --nav-bg: #f6f6f7;
+  --nav-ink: var(--ink);
+  --nav-muted: var(--ink-3);
+  --nav-accent: var(--blue);
+  --nav-line: var(--hair);
+  --nav-hover: #eeeef1;
+  --nav-active: #e9e9ef;
   --font-sans: "Geist", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-serif: "Adamina", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --font-mono: "DM Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
@@ -125,9 +126,9 @@ img, svg { max-width: 100%; }
   align-self: start;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
-  background: var(--ink);
+  background: var(--nav-bg);
   color: var(--nav-ink);
-  border-right: 1px solid var(--ink);
+  border-right: 1px solid var(--nav-line);
   overflow: hidden;
   z-index: 35;
 }
@@ -136,34 +137,34 @@ img, svg { max-width: 100%; }
 .kb-sidebar-head .brand, .kb-sidebar-head .logo-wrap { color: var(--nav-ink); }
 .kb-sidebar-head .brand-sub { color: var(--nav-muted); font-size: 9px; }
 .kb-sidebar-close { display: none; border: 0; background: transparent; font-size: 24px; line-height: 1; color: var(--nav-ink); cursor: pointer; }
-.kb-sidebar-search { display: flex; align-items: center; gap: 8px; margin: 12px 14px 14px; padding: 8px 10px; border: 1px solid var(--nav-line); border-radius: 9px; background: rgba(255, 255, 255, 0.06); }
+.kb-sidebar-search { display: flex; align-items: center; gap: 8px; margin: 12px 14px 14px; padding: 8px 10px; border: 1px solid var(--nav-line); border-radius: 9px; background: var(--paper); }
 .kb-sidebar-search:focus-within { border-color: var(--nav-accent); box-shadow: 0 0 0 2px var(--nav-active); }
 .kb-sidebar-search .filter-icon { color: var(--nav-muted); }
-.kb-sidebar-search input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; font: inherit; font-size: 13px; color: #fff; }
+.kb-sidebar-search input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; font: inherit; font-size: 13px; color: var(--nav-ink); }
 .kb-sidebar-search input::placeholder { color: var(--nav-muted); opacity: 1; }
 .kb-sidebar-clear { border: 0; background: transparent; color: var(--nav-ink); cursor: pointer; font-size: 17px; line-height: 1; padding: 0 2px; }
 .kb-sidebar-clear[hidden] { display: none; }
-.kb-tree { overflow-y: auto; overscroll-behavior: contain; padding: 0 10px max(24px, env(safe-area-inset-bottom)); scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.3) transparent; }
+.kb-tree { overflow-y: auto; overscroll-behavior: contain; padding: 0 10px max(24px, env(safe-area-inset-bottom)); scrollbar-width: thin; scrollbar-color: var(--nav-muted) transparent; }
 .kb-home-link, .kb-tree-heading, .kb-tree-item { color: var(--nav-ink); border-radius: 7px; transition: color 0.15s, background 0.15s; }
-.kb-home-link:hover, .kb-tree-heading:hover, .kb-tree-item:hover { color: #fff; background: var(--nav-hover); text-decoration: none; }
+.kb-home-link:hover, .kb-tree-heading:hover, .kb-tree-item:hover { color: var(--nav-ink); background: var(--nav-hover); text-decoration: none; }
 .kb-home-link { display: grid; grid-template-columns: 10px 1fr auto; align-items: center; gap: 9px; padding: 8px 10px; margin-bottom: 6px; font-size: 13px; font-weight: 500; }
-.kb-home-link[aria-current="page"] { color: #fff; background: var(--nav-active); box-shadow: inset 2px 0 0 var(--nav-accent); }
+.kb-home-link[aria-current="page"] { color: var(--nav-ink); background: var(--nav-active); box-shadow: inset 2px 0 0 var(--nav-accent); }
 .kb-node-mark { width: 7px; height: 7px; border: 1.5px solid var(--nav-accent); border-radius: 2px; transform: rotate(45deg); }
 .kb-node-meta { color: var(--nav-muted); font-size: 9px; }
 .kb-tree-group { padding: 5px 0 7px; border-top: 1px solid var(--nav-line); }
 .kb-tree-group[hidden] { display: none; }
 .kb-tree-heading { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; align-items: center; gap: 4px; padding: 2px 9px 2px 5px; font-size: 12px; font-weight: 600; letter-spacing: -0.01em; }
-.kb-tree-heading.active { color: #fff; background: rgba(255, 255, 255, 0.06); }
+.kb-tree-heading.active { color: var(--nav-ink); background: var(--nav-active); }
 .kb-tree-toggle { display: grid; place-items: center; width: 18px; height: 28px; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; }
 .kb-tree-caret { width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translate(-1px, -1px) rotate(-45deg); transition: transform 0.16s var(--ease); }
 .kb-tree-caret.open { transform: translateY(-2px) rotate(45deg); }
 .kb-tree-section-link { display: block; min-width: 0; padding: 6px 0; color: inherit; }
-.kb-tree-section-link:hover { color: #fff; text-decoration: none; }
+.kb-tree-section-link:hover { color: var(--nav-ink); text-decoration: none; }
 .kb-tree-count { color: var(--nav-muted); font-size: 10px; font-weight: 400; }
 .kb-tree-items { display: grid; gap: 1px; }
 .kb-tree-items[hidden] { display: none; }
 .kb-tree-item { display: grid; grid-template-columns: 7px minmax(0, 1fr); align-items: center; gap: 9px; padding: 5px 10px 5px 17px; font-size: 12.5px; line-height: 1.3; }
-.kb-tree-item[aria-current="page"] { color: #fff; background: var(--nav-active); box-shadow: inset 2px 0 0 var(--nav-accent); font-weight: 600; }
+.kb-tree-item[aria-current="page"] { color: var(--nav-ink); background: var(--nav-active); box-shadow: inset 2px 0 0 var(--nav-accent); font-weight: 600; }
 .kb-tree-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kb-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
 .status-dot-verified, .status-dot-promising { background: var(--blue); }

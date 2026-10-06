@@ -138,10 +138,11 @@ block `title`/`body`, glossary text):
 
 Derived from the Dilate visual language, with restrained scientific reading surfaces:
 
-- Ink and sidebar use Dilate navy `#000020`; body ink `#545368`; muted ink
+- Ink uses Dilate navy `#000020`; body ink `#545368`; muted ink
   `#656579`; Dilate blue `#0454ff`. Reading surfaces are white `#ffffff`, with neutral
-  `#f6f6f9`/`#eeeef4` accents and `#e3e3eb` borders. Navigation has light text and a
-  pale-blue active marker. The navbar stays white, with search at its right edge.
+  `#f6f6f9`/`#eeeef4` accents and `#e3e3eb` borders. The sidebar uses light gray `#f6f6f7`,
+  dark text, neutral hover/selection backgrounds, and a blue active marker.
+  The navbar stays white, with search at its right edge.
   The desktop sidebar reaches the top of the viewport and holds the site identity.
   On mobile, the white navbar shows the identity while the sidebar becomes a full-height drawer.
   Article content and its right rail share a centered, width-limited layout within the
